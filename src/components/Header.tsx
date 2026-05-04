@@ -5,7 +5,6 @@ import {
   Loader2,
   LogOut,
   Receipt,
-  ShieldCheck,
   Skull,
 } from 'lucide-react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
@@ -53,10 +52,7 @@ export function Header() {
           </NavLink>
           {isAdmin && (
             <NavLink to="/admin" className={navLinkClass}>
-              <span className="inline-flex items-center gap-1">
-                <ShieldCheck className="h-3.5 w-3.5" />
-                Admin
-              </span>
+              Admin
             </NavLink>
           )}
         </nav>

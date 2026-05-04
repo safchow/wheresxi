@@ -1,12 +1,5 @@
 import { useMemo, useState } from 'react'
-import {
-  CheckCircle2,
-  Copy,
-  Loader2,
-  Plus,
-  ShieldCheck,
-  Trash2,
-} from 'lucide-react'
+import { CheckCircle2, Copy, Loader2, Plus, Trash2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -55,10 +48,7 @@ export function AdminPage() {
         <h1 className="text-2xl font-semibold tracking-tight md:text-[32px] md:leading-[1.1]">
           Admin
         </h1>
-        <Badge variant="outline" className="gap-1">
-          <ShieldCheck className="h-3 w-3" />
-          ADMIN
-        </Badge>
+        <Badge variant="outline">ADMIN</Badge>
       </div>
 
       <ResolveMarketCard />
