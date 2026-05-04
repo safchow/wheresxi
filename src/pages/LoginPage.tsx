@@ -62,7 +62,7 @@ export function LoginPage() {
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="e.g. dvp_denier"
+                placeholder="e.g. taylor_fanboy"
                 autoComplete="username"
                 autoFocus
                 className="mt-1 font-mono"

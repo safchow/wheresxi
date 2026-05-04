@@ -63,8 +63,7 @@ const RULES: Rule[] = [
           <span className="font-mono">12×</span> — correct 5-minute window
         </li>
         <li>
-          <span className="font-mono">60×</span> — exact minute. Allegedly
-          someone has done this.
+          <span className="font-mono">60×</span> — exact minute
         </li>
       </ul>
     ),

@@ -26,15 +26,6 @@ export function AboutPage() {
           </p>
           <p>That was supposed to be the end of it.</p>
           <p>
-            Within a week, an (extremely handsome and intelligent) engineer who
-            claimed to be using their innovation hours "responsibly" stayed up
-            until <span className="font-mono">3 AM</span> on a Tuesday and
-            shipped the first version of{' '}
-            <span className="font-semibold">wheresxi</span>. They said it was
-            for fun. It was, in fact, to fuel certain individuals' rapidly
-            developing gambling addictions.
-          </p>
-          <p>
             Today, wheresxi is what happens when a small team has a lot of
             opinions about one guy's commute and slightly too much free time.
             We do not endorse problem gambling. We do not condone tampering
@@ -46,10 +37,6 @@ export function AboutPage() {
               rules
             </Link>
             .
-          </p>
-          <p>
-            One more thing: this app is purely vibe coded. Not a single line of
-            code was reviewed.
           </p>
           <p className="text-muted-foreground">
             — The wheresxi team (anonymous, for OpSec reasons)
