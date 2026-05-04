@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: wheresxi-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: wheresxi
+      POSTGRES_PASSWORD: wheresxi_dev
+      POSTGRES_DB: wheresxi
+    ports:
+      # 5433 to avoid conflicts with any local Postgres on 5432
+      - '5433:5432'
+    volumes:
+      - wheresxi_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U wheresxi -d wheresxi']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  wheresxi_pgdata:

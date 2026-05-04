@@ -1,0 +1,220 @@
+// wheresxi schema
+// Prediction market for one (1) guy named Taylor.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Auth ────────────────────────────────────────────────────────────────
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id            String   @id @default(cuid())
+  username      String   @unique
+  name          String
+  email         String?  @unique
+  passwordHash  String
+  role          Role     @default(USER)
+  credits       Int      @default(500)
+  bankruptcies  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Invite the user signed up with (null for the bootstrap `system` user
+  // and any backfill cases). SetNull on delete so revoking an invite
+  // doesn't take its claimers down with it.
+  usedInviteId  String?
+  usedInvite    InviteToken?     @relation("InviteUsage", fields: [usedInviteId], references: [id], onDelete: SetNull)
+
+  accessTokens     AccessToken[]
+  bets             Bet[]
+  invitesCreated   InviteToken[]    @relation("InviteCreator")
+  bankruptcyEvents BankruptcyEvent[]
+  resolvedMarkets  MarketDay[]      @relation("MarketResolver")
+  adminLogs        AdminLog[]
+
+  @@index([credits])
+  @@index([usedInviteId])
+}
+
+// Bearer tokens. We hash on insert and compare hashes on auth.
+model AccessToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  // Optional human-readable hint for the user (e.g. "iPhone")
+  name      String?
+  expiresAt DateTime?
+  lastUsedAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+// Reusable signup invitation. An invite can grant either USER or ADMIN role
+// to the new account, and stays valid for unlimited redemptions until an
+// admin revokes it (or it expires).
+model InviteToken {
+  id          String    @id @default(cuid())
+  token       String    @unique
+  createdById String
+  createdBy   User      @relation("InviteCreator", fields: [createdById], references: [id], onDelete: Cascade)
+
+  // What role new users get when they sign up with this invite.
+  grantsRole  Role      @default(USER)
+  // Soft-delete: set when an admin kills the invite. Preserves history of
+  // which users had already redeemed it.
+  revokedAt   DateTime?
+
+  expiresAt   DateTime?
+  note        String?
+  createdAt   DateTime  @default(now())
+
+  // Each User who registered using this invite. Drives usage count + the
+  // "claimed by @x, @y" list in the admin UI.
+  usages      User[]    @relation("InviteUsage")
+
+  @@index([createdById])
+  @@index([revokedAt])
+}
+
+// ─── Market ──────────────────────────────────────────────────────────────
+
+enum MarketStatus {
+  OPEN
+  LOCKED
+  RESOLVED
+  REFUNDED
+}
+
+enum BustReason {
+  BEFORE_NINE
+  AFTER_TENTHIRTY
+  WFH_SICK
+}
+
+// One row per market day. Markets only run Tue/Wed/Thu, but we store the date
+// as-is and let business logic enforce that.
+model MarketDay {
+  id              String       @id @default(cuid())
+  // Calendar date the market runs for (in UTC midnight). Unique per day.
+  date            DateTime     @unique @db.Date
+  status          MarketStatus @default(OPEN)
+
+  // When admin resolves the market, exactly one of these is set:
+  //   arrivedAtMinute → Taylor arrived at this minute (0–1440)
+  //   bustReason      → everyone busts for this reason
+  arrivedAtMinute Int?
+  bustReason      BustReason?
+
+  resolvedAt      DateTime?
+  resolvedById    String?
+  resolvedBy      User?        @relation("MarketResolver", fields: [resolvedById], references: [id], onDelete: SetNull)
+
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  bets            Bet[]
+
+  @@index([status])
+}
+
+// ─── Bets ────────────────────────────────────────────────────────────────
+
+enum Granularity {
+  HALF_HOUR     // 2x
+  QUARTER_HOUR  // 4x
+  FIVE_MIN      // 12x
+  EXACT         // 60x
+}
+
+enum BetStatus {
+  PENDING
+  WON
+  LOST
+  REFUNDED
+  CANCELLED
+}
+
+// A single guess. Acts as the bet log.
+//   For non-EXACT granularities: bucketStartMinute + bucketEndMinute set.
+//   For EXACT granularity:       exactMinute set.
+model Bet {
+  id                 String      @id @default(cuid())
+  userId             String
+  user               User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  marketDayId        String
+  marketDay          MarketDay   @relation(fields: [marketDayId], references: [id], onDelete: Cascade)
+
+  granularity        Granularity
+  bucketStartMinute  Int?
+  bucketEndMinute    Int?
+  exactMinute        Int?
+
+  // Stake (debited from user.credits at placement) and locked-in multiplier.
+  wager              Int
+  multiplier         Int
+
+  status             BetStatus   @default(PENDING)
+  // 0 if LOST. wager * multiplier if WON.
+  payout             Int         @default(0)
+  // Resolution metadata
+  settledAt          DateTime?
+
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  @@index([userId, status])
+  @@index([marketDayId, status])
+}
+
+// ─── Audit ───────────────────────────────────────────────────────────────
+
+enum AdminAction {
+  RESOLVE_MARKET
+  REFUND_MARKET
+  CREATE_INVITE
+  REVOKE_INVITE
+}
+
+/// Admin-only mutations are written here so we can answer "who did what".
+model AdminLog {
+  id         String      @id @default(cuid())
+  adminId    String
+  admin      User        @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  action     AdminAction
+  targetType String?
+  targetId   String?
+  payload    Json?
+  createdAt  DateTime    @default(now())
+
+  @@index([adminId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+// ─── Reputation ──────────────────────────────────────────────────────────
+
+// One row each time a user declares bankruptcy. Powers the count shown on the
+// leaderboard and a future "history" view.
+model BankruptcyEvent {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Credits the user had right before reset (almost always 0, but recorded for posterity)
+  atCredits   Int
+  resetTo     Int
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+}
