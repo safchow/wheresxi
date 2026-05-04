@@ -4,6 +4,7 @@ import {
   TEST_PASSWORD,
   createTestUser,
   ensureMarketDay,
+  expectErrorCode,
   expectOk,
   loginAs,
 } from './helpers/fixtures.js'
@@ -142,5 +143,13 @@ test.describe('GET /api/leaderboard', () => {
     })
     expect(res.ok()).toBe(true)
     expect((await res.json()).range).toBe('week')
+  })
+
+  test('requires authentication', async ({ request }) => {
+    // Even with seeded data, an unauthenticated caller never sees the board.
+    await createTestUser({ username: 'private', credits: 999 })
+    const res = await request.get('/api/leaderboard?range=all')
+    expect(res.status()).toBe(401)
+    await expectErrorCode(res, 'E_UNAUTHENTICATED')
   })
 })
