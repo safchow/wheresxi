@@ -1,13 +1,5 @@
 import { useState } from 'react'
-import {
-  Coins,
-  Crown,
-  Loader2,
-  Medal,
-  Skull,
-  Target,
-  Trophy,
-} from 'lucide-react'
+import { Crown, Loader2, Medal, Skull, Trophy } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
@@ -42,12 +34,6 @@ export function LeaderboardPage() {
   const podium = rows.slice(0, 3)
   const tableRows = rows.slice(3)
 
-  const totalCredits = rows.reduce((s, r) => s + r.credits, 0)
-  const settledCount = rows.reduce((s, r) => s + r.won + r.lost, 0)
-  const wonCount = rows.reduce((s, r) => s + r.won, 0)
-  const totalBankruptcies = rows.reduce((s, r) => s + r.bankruptcies, 0)
-  const avgAccuracy = settledCount === 0 ? 0 : Math.round((wonCount / settledCount) * 100)
-
   const meRow = me
     ? rows.find((r) => r.userId === me.id)
     : undefined
@@ -75,24 +61,6 @@ export function LeaderboardPage() {
             <TabsTrigger value="all">All-time</TabsTrigger>
           </TabsList>
         </Tabs>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-3">
-        <SummaryStat
-          icon={<Coins className="h-4 w-4" />}
-          label="Credits won"
-          value={fmtCr(totalCredits)}
-        />
-        <SummaryStat
-          icon={<Target className="h-4 w-4" />}
-          label="Avg. accuracy"
-          value={settledCount === 0 ? '—' : `${avgAccuracy}%`}
-        />
-        <SummaryStat
-          icon={<Skull className="h-4 w-4" />}
-          label="Bankruptcies filed"
-          value={`${totalBankruptcies}`}
-        />
       </div>
 
       {isLoading ? (
@@ -172,32 +140,6 @@ export function LeaderboardPage() {
 }
 
 /* ─── sub-components ───────────────────────────────────────────────────── */
-
-function SummaryStat({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode
-  label: string
-  value: string
-}) {
-  return (
-    <Card>
-      <CardContent className="flex items-center gap-3 p-4">
-        <div className="grid h-9 w-9 place-items-center rounded-md bg-secondary text-muted-foreground">
-          {icon}
-        </div>
-        <div className="min-w-0">
-          <div className="text-xs text-muted-foreground">{label}</div>
-          <div className="font-mono text-lg font-semibold tabular-nums">
-            {value}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
 
 function PodiumCard({ entry }: { entry: LeaderboardRow }) {
   const rankStyle =
