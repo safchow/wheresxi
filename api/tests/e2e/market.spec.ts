@@ -40,6 +40,29 @@ test.describe('GET /api/market/week', () => {
     expect(await testPrisma().marketDay.count()).toBe(3)
   })
 
+  test('concurrent first-load requests do not race to a 500', async ({
+    request,
+  }) => {
+    // Regression: the previous per-row upsert loop raced under parallel load
+    // and threw P2002 on MarketDay.date. With createMany({ skipDuplicates:
+    // true }) the inserts are atomic, so all five callers should succeed and
+    // exactly three rows should land in the table.
+    const token = await authedToken(request)
+    expect(await testPrisma().marketDay.count()).toBe(0)
+
+    const responses = await Promise.all(
+      Array.from({ length: 5 }, () =>
+        request.get('/api/market/week?granularity=HALF_HOUR', {
+          headers: { authorization: `Bearer ${token}` },
+        }),
+      ),
+    )
+    for (const res of responses) {
+      expect(res.status(), await res.text()).toBe(200)
+    }
+    expect(await testPrisma().marketDay.count()).toBe(3)
+  })
+
   test('half-hour grid has exactly 3 buckets covering 9:00–10:30', async ({
     request,
   }) => {

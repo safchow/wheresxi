@@ -113,20 +113,24 @@ export default class MarketService {
 
   /**
    * Returns this week's three markets (Tue/Wed/Thu), creating any that don't
-   * yet exist. Idempotent.
+   * yet exist. Idempotent and concurrency-safe: the previous per-row upsert
+   * loop raced under load (P2002 unique violation on `MarketDay.date` when
+   * the dashboard fired multiple `GET /api/market/week` calls in parallel).
+   *
+   * `createMany({ skipDuplicates: true })` compiles to `INSERT ... ON
+   * CONFLICT DO NOTHING` on Postgres, which is atomic, so concurrent callers
+   * can each hit it without stepping on each other.
    */
   async listActiveWeek(): Promise<MarketDay[]> {
     const dates = MarketService.currentWeekMarketDates()
-    const created: MarketDay[] = []
-    for (const date of dates) {
-      const market = await this.prisma.marketDay.upsert({
-        where: { date },
-        update: {},
-        create: { date, status: 'OPEN' },
-      })
-      created.push(market)
-    }
-    return created
+    await this.prisma.marketDay.createMany({
+      data: dates.map((date) => ({ date, status: 'OPEN' as const })),
+      skipDuplicates: true,
+    })
+    return this.prisma.marketDay.findMany({
+      where: { date: { in: dates } },
+      orderBy: { date: 'asc' },
+    })
   }
 
   /** Most recent N markets, newest first. */
