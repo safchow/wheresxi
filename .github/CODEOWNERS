@@ -1,0 +1,8 @@
+# GitHub auto-requests these owners as reviewers on PRs touching the
+# matched paths. Branch protection on `main` blocks merges until at
+# least one matching code owner approves.
+#
+# Solo project today — `safchow` owns everything. Add scoped lines
+# (e.g. `/api/ @backend-team`) as the project grows.
+
+* @safchow
