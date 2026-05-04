@@ -51,11 +51,24 @@ Two services + two managed plugins:
    - Public domain: `https://wheresxi.example`
 
 4. **Bootstrap the first admin user**
-   Once deployed, exec into the API container and create an invite + your
-   user:
+   Once deployed, exec into the API container and mint an admin-grant
+   invite. The `--admin` flag means whoever signs up with the link is
+   created as an ADMIN — no separate promote step needed.
    ```bash
-   railway run --service=wheresxi-api node ace make:invite
-   # Visit the printed signup URL, create your user.
+   railway run --service=wheresxi-api node ace make:invite \
+     --admin \
+     --frontend=https://wheresxi.example
+   ```
+   The command prints a `https://wheresxi.example/signup?inviteToken=…`
+   URL. Visit it, create your account, and you're in as admin.
+
+   On a fresh database with no users yet, the command also creates a
+   placeholder `system` user to own the invite — that user has a disabled
+   password and exists only to satisfy the `InviteToken.createdBy` FK.
+
+   To later promote an existing regular user (e.g. a teammate who already
+   signed up with a USER invite), use:
+   ```bash
    railway run --service=wheresxi-api node ace promote:admin <username>
    ```
 
