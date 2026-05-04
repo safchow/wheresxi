@@ -4,13 +4,14 @@ import { PrismaClient, type InviteToken, type Role } from '@prisma/client'
 import ApiException from '#exceptions/api_exception'
 
 /**
- * Shape sent to the admin UI: each invite carries its creator and the list
- * of users who've redeemed it (zero or more, with timestamps so the UI can
+ * Shape sent to the admin UI: each invite carries its creator (null only
+ * for bootstrap invites minted before any user existed) and the list of
+ * users who've redeemed it (zero or more, with timestamps so the UI can
  * render "claimed by @x · 2 days ago"). We also surface a `usageCount`
  * because Postgres can compute it cheaper than the UI tallying an array.
  */
 export type InviteWithRelations = InviteToken & {
-  createdBy: { id: string; username: string }
+  createdBy: { id: string; username: string } | null
   usages: { id: string; username: string; createdAt: Date }[]
   usageCount: number
 }
@@ -20,8 +21,11 @@ export default class InviteService {
   constructor(private prisma: PrismaClient) {}
 
   /**
-   * Create a reusable invite token. Admin-only.
+   * Create a reusable invite token.
    *
+   * - `createdById`    null for bootstrap invites minted on a fresh deploy
+   *                    (no users exist yet); always set when minted from
+   *                    the admin UI.
    * - `expiresInDays`  null/undefined → never expires.
    * - `grantsRole`     'USER' | 'ADMIN' (default USER). Lets admins mint
    *                    invites that promote new users straight to admin
@@ -31,7 +35,7 @@ export default class InviteService {
    * is no per-invite redemption cap.
    */
   async create(input: {
-    createdById: string
+    createdById?: string | null
     expiresInDays?: number | null
     note?: string | null
     grantsRole?: Role | null
@@ -44,7 +48,7 @@ export default class InviteService {
     return this.prisma.inviteToken.create({
       data: {
         token,
-        createdById: input.createdById,
+        createdById: input.createdById ?? null,
         expiresAt,
         note: input.note ?? null,
         grantsRole: input.grantsRole ?? 'USER',

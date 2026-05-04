@@ -62,9 +62,10 @@ Two services + two managed plugins:
    The command prints a `https://wheresxi.example/signup?inviteToken=…`
    URL. Visit it, create your account, and you're in as admin.
 
-   On a fresh database with no users yet, the command also creates a
-   placeholder `system` user to own the invite — that user has a disabled
-   password and exists only to satisfy the `InviteToken.createdBy` FK.
+   On a brand-new DB the bootstrap invite has no creator — it's the only
+   row in the schema where `InviteToken.createdById` is null. Every
+   subsequent invite minted via the admin UI carries the minting admin's
+   id automatically.
 
    To later promote an existing regular user (e.g. a teammate who already
    signed up with a USER invite), use:

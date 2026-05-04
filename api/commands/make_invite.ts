@@ -41,23 +41,32 @@ export default class MakeInvite extends BaseCommand {
   async run() {
     const prisma = new PrismaClient()
     try {
-      let creator = this.user
-        ? await prisma.user.findUnique({ where: { username: this.user } })
-        : await prisma.user.findFirst({ orderBy: { createdAt: 'asc' } })
-
-      if (!creator) {
-        creator = await prisma.user.upsert({
-          where: { username: 'system' },
-          update: {},
-          create: {
-            username: 'system',
-            name: 'wheresxi system',
-            passwordHash: 'disabled',
-            role: 'ADMIN',
-            credits: 0,
-          },
+      // Resolve the creator. If the operator passed --user we require a
+      // match; if they didn't pass anything we default to the first user
+      // in the DB (typical "the team's first admin owns subsequent
+      // invites" pattern). On a brand-new DB with zero users, we just
+      // mint the invite with no creator — the schema allows it.
+      let creatorId: string | null = null
+      if (this.user) {
+        const creator = await prisma.user.findUnique({
+          where: { username: this.user },
         })
-        this.logger.info('No users yet — created a `system` user to own this invite.')
+        if (!creator) {
+          this.logger.error(`No user with username "${this.user}".`)
+          this.exitCode = 1
+          return
+        }
+        creatorId = creator.id
+      } else {
+        const firstUser = await prisma.user.findFirst({
+          orderBy: { createdAt: 'asc' },
+        })
+        creatorId = firstUser?.id ?? null
+        if (!creatorId) {
+          this.logger.info(
+            'No users yet — minting a bootstrap invite with no creator.',
+          )
+        }
       }
 
       const token = `inv_${randomBytes(16).toString('hex')}`
@@ -70,7 +79,7 @@ export default class MakeInvite extends BaseCommand {
       await prisma.inviteToken.create({
         data: {
           token,
-          createdById: creator.id,
+          createdById: creatorId,
           note: this.note ?? null,
           expiresAt,
           grantsRole,

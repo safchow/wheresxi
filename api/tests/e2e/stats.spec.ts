@@ -12,12 +12,12 @@ test.beforeEach(async () => {
 })
 
 test.describe('GET /api/stats/taylor', () => {
-  test('counts only real users, not the system bootstrap row', async ({
+  test('traderCount equals the number of users in the table', async ({
     request,
   }) => {
-    await createTestUser({ username: 'system' })
     await createTestUser({ username: 'real_a' })
     await createTestUser({ username: 'real_b' })
+    await createTestUser({ username: 'real_c' })
 
     const { token } = await loginAs(request, 'real_a', TEST_PASSWORD)
     const res = await request.get('/api/stats/taylor', {
@@ -25,7 +25,7 @@ test.describe('GET /api/stats/taylor', () => {
     })
     expect(res.ok()).toBe(true)
     const body = await res.json()
-    expect(body.traderCount).toBe(2)
+    expect(body.traderCount).toBe(3)
   })
 
   test('avgArrivalMinute is the mean of resolved arrivals; null when none', async ({

@@ -117,7 +117,7 @@ export interface InviteUsage {
 export interface InviteToken {
   id: string
   token: string
-  createdById: string
+  createdById: string | null
   /** Role granted to anyone who signs up with this invite. */
   grantsRole: Role
   /** Set once an admin revokes the invite (soft delete). */
@@ -125,7 +125,8 @@ export interface InviteToken {
   expiresAt: string | null
   note: string | null
   createdAt: string
-  createdBy: { id: string; username: string }
+  /** Null only for the bootstrap invite minted before any user existed. */
+  createdBy: { id: string; username: string } | null
   /** Users who have signed up using this invite, oldest first. */
   usages: InviteUsage[]
   /** Convenience count from the API (matches `usages.length`). */

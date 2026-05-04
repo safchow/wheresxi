@@ -25,17 +25,14 @@ export default class StatsService {
 
   /**
    * Aggregate stats for the Taylor dossier:
-   *  - `traderCount`: how many real users have signed up (excluding the
-   *    `system` bootstrap user)
+   *  - `traderCount`: how many users have signed up
    *  - `avgArrivalMinute`: arithmetic mean of every recorded arrival minute
    *    across all RESOLVED markets that ended with an actual arrival
    *  - `recentArrivals`: this week's Mon→Fri, with each day annotated as
    *    arrived / refunded / busted / pending / WFH
    */
   async getTaylorStats(): Promise<TaylorStats> {
-    const traderCount = await this.prisma.user.count({
-      where: { username: { not: 'system' } },
-    })
+    const traderCount = await this.prisma.user.count()
 
     const arrivedMarkets = await this.prisma.marketDay.findMany({
       where: {

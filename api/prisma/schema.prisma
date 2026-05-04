@@ -64,11 +64,16 @@ model AccessToken {
 // Reusable signup invitation. An invite can grant either USER or ADMIN role
 // to the new account, and stays valid for unlimited redemptions until an
 // admin revokes it (or it expires).
+//
+// `createdById` is nullable so the very first invite on a fresh deploy can
+// be minted before any user exists (bootstrap admin). For invites minted
+// from the admin UI it's always set; SetNull-on-delete keeps invite history
+// alive if the creating admin's account is later deleted.
 model InviteToken {
   id          String    @id @default(cuid())
   token       String    @unique
-  createdById String
-  createdBy   User      @relation("InviteCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  createdById String?
+  createdBy   User?     @relation("InviteCreator", fields: [createdById], references: [id], onDelete: SetNull)
 
   // What role new users get when they sign up with this invite.
   grantsRole  Role      @default(USER)

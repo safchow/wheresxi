@@ -516,7 +516,12 @@ function InvitesCard() {
                     </div>
                     <div className="mt-0.5 text-xs text-muted-foreground">
                       {inv.note ? <>{inv.note} · </> : null}
-                      created by @{inv.createdBy.username}
+                      created by{' '}
+                      {inv.createdBy ? (
+                        <>@{inv.createdBy.username}</>
+                      ) : (
+                        <span className="italic">bootstrap</span>
+                      )}
                       {claimerNames.length > 0 && (
                         <> · used by {claimerNames.join(', ')}</>
                       )}

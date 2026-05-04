@@ -129,9 +129,8 @@ export default class AuthService {
         code: 'E_BAD_CREDENTIALS',
       })
     }
-    // argon2.verify throws on malformed hashes (e.g., the bootstrap `system`
-    // user's `passwordHash = 'disabled'`). Treat that the same as a wrong
-    // password so the API doesn't leak a 500 on auth attempts.
+    // argon2.verify throws on malformed hashes. Treat that the same as a
+    // wrong password so the API doesn't leak a 500 on auth attempts.
     let ok = false
     try {
       ok = await argon2.verify(user.passwordHash, input.password)
