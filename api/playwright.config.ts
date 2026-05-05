@@ -44,7 +44,7 @@ export default defineConfig({
       `DATABASE_URL=${TEST_DB_URL}`,
       'ACCESS_TOKEN_TTL_DAYS=30',
       'USER_STARTING_CREDITS=500',
-      'BANKRUPTCY_RESET_CREDITS=100',
+      'BANKRUPTCY_RESET_CREDITS=500',
       'TZ=UTC',
       'node ace serve',
     ].join(' '),

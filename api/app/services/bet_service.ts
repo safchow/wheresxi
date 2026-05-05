@@ -391,7 +391,7 @@ export default class BetService {
   // ─── bankruptcy ────────────────────────────────────────────────────────
 
   async declareBankruptcy(userId: string): Promise<{ credits: number }> {
-    const resetTo = Number(process.env.BANKRUPTCY_RESET_CREDITS ?? 100)
+    const resetTo = Number(process.env.BANKRUPTCY_RESET_CREDITS ?? 500)
     return this.prisma.$transaction(async (tx) => {
       const user = await tx.user.findUnique({ where: { id: userId } })
       if (!user) throw new ApiException('User not found', { status: 404 })

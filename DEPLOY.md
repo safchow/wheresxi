@@ -37,7 +37,7 @@ Two services + two managed plugins:
      ALLOWED_ORIGINS             https://wheresxi.example     # web service URL
      ACCESS_TOKEN_TTL_DAYS       30
      USER_STARTING_CREDITS       500
-     BANKRUPTCY_RESET_CREDITS    100
+     BANKRUPTCY_RESET_CREDITS    500
      ```
    - `prisma migrate deploy` runs automatically on startup (see `Dockerfile`
      `CMD`), so the DB schema stays in sync with each release.

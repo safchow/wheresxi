@@ -17,7 +17,7 @@ test.describe('POST /api/bankruptcy', () => {
     request,
   }) => {
     // Try a few balances above zero — none of them should be allowed to file.
-    for (const credits of [250, 100, 99, 1]) {
+    for (const credits of [500, 250, 100, 1]) {
       const username = `still_solvent_${credits}`
       await createTestUser({ username, credits })
       const { token } = await loginAs(request, username, TEST_PASSWORD)
@@ -38,12 +38,12 @@ test.describe('POST /api/bankruptcy', () => {
       headers: { authorization: `Bearer ${token}` },
     })
     await expectOk(res)
-    expect((await res.json()).credits).toBe(100)
+    expect((await res.json()).credits).toBe(500)
 
     const updated = await testPrisma().user.findUniqueOrThrow({
       where: { id: user.id },
     })
-    expect(updated.credits).toBe(100)
+    expect(updated.credits).toBe(500)
     expect(updated.bankruptcies).toBe(1)
 
     const events = await testPrisma().bankruptcyEvent.findMany({
@@ -51,10 +51,10 @@ test.describe('POST /api/bankruptcy', () => {
     })
     expect(events).toHaveLength(1)
     expect(events[0].atCredits).toBe(0)
-    expect(events[0].resetTo).toBe(100)
+    expect(events[0].resetTo).toBe(500)
   })
 
-  test('post-reset balance of 100 cr blocks immediately re-filing', async ({
+  test('post-reset balance of 500 cr blocks immediately re-filing', async ({
     request,
   }) => {
     await createTestUser({ username: 'twice_broke', credits: 0 })
@@ -65,7 +65,7 @@ test.describe('POST /api/bankruptcy', () => {
         headers: { authorization: `Bearer ${token}` },
       }),
     )
-    // We're back at 100 — no filing.
+    // We're back at 500 — no filing.
     const second = await request.post('/api/bankruptcy', {
       headers: { authorization: `Bearer ${token}` },
     })
@@ -83,7 +83,7 @@ test.describe('POST /api/bankruptcy', () => {
         headers: { authorization: `Bearer ${token}` },
       }),
     )
-    // Wipe their credits again to simulate losing all 100 to bets.
+    // Wipe their credits again to simulate losing all 500 to bets.
     await testPrisma().user.update({
       where: { id: user.id },
       data: { credits: 0 },
@@ -97,7 +97,7 @@ test.describe('POST /api/bankruptcy', () => {
       where: { id: user.id },
     })
     expect(final.bankruptcies).toBe(2)
-    expect(final.credits).toBe(100)
+    expect(final.credits).toBe(500)
   })
 
   test('requires authentication', async ({ request }) => {
