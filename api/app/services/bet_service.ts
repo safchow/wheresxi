@@ -409,6 +409,19 @@ export default class BetService {
           { status: 409, code: 'E_TOO_RICH_TO_BUST' },
         )
       }
+      // Pending bets are unsettled credit — until they resolve they could
+      // still pay out. Treat them like a not-yet-recognized balance and
+      // refuse the filing so users can't claim a reset while a winning
+      // bet is still in flight.
+      const pendingBets = await tx.bet.count({
+        where: { userId, status: 'PENDING' },
+      })
+      if (pendingBets > 0) {
+        throw new ApiException(
+          `You still have ${pendingBets} pending bet${pendingBets === 1 ? '' : 's'}. Wait for them to settle before filing.`,
+          { status: 409, code: 'E_HAS_PENDING_BETS' },
+        )
+      }
       await tx.bankruptcyEvent.create({
         data: { userId, atCredits: user.credits, resetTo },
       })

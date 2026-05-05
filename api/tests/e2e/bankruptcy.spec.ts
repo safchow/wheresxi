@@ -2,10 +2,12 @@ import { expect, test } from '@playwright/test'
 import { resetDb, testPrisma } from './helpers/db.js'
 import {
   TEST_PASSWORD,
+  createOpenMarket,
   createTestUser,
   expectErrorCode,
   expectOk,
   loginAs,
+  seedPendingBet,
 } from './helpers/fixtures.js'
 
 test.beforeEach(async () => {
@@ -98,6 +100,64 @@ test.describe('POST /api/bankruptcy', () => {
     })
     expect(final.bankruptcies).toBe(2)
     expect(final.credits).toBe(500)
+  })
+
+  test('rejects filing while a pending bet is still in flight', async ({
+    request,
+  }) => {
+    const user = await createTestUser({ username: 'pending_filer', credits: 0 })
+    const market = await createOpenMarket()
+    await seedPendingBet({
+      userId: user.id,
+      marketDayId: market.id,
+      bucketStartMinute: 540,
+      bucketEndMinute: 570,
+      wager: 100,
+    })
+
+    const { token } = await loginAs(request, 'pending_filer', TEST_PASSWORD)
+    const res = await request.post('/api/bankruptcy', {
+      headers: { authorization: `Bearer ${token}` },
+    })
+    expect(res.status()).toBe(409)
+    await expectErrorCode(res, 'E_HAS_PENDING_BETS')
+
+    // No bankruptcy event written, no credits refilled, counter untouched.
+    const after = await testPrisma().user.findUniqueOrThrow({
+      where: { id: user.id },
+    })
+    expect(after.credits).toBe(0)
+    expect(after.bankruptcies).toBe(0)
+    expect(
+      await testPrisma().bankruptcyEvent.count({ where: { userId: user.id } }),
+    ).toBe(0)
+  })
+
+  test('lets you file once the pending bet is cancelled', async ({
+    request,
+  }) => {
+    const user = await createTestUser({ username: 'cancel_then_file', credits: 0 })
+    const market = await createOpenMarket()
+    const bet = await seedPendingBet({
+      userId: user.id,
+      marketDayId: market.id,
+      bucketStartMinute: 540,
+      bucketEndMinute: 570,
+      wager: 50,
+    })
+
+    // Settled bets (CANCELLED here) shouldn't block — only PENDING does.
+    await testPrisma().bet.update({
+      where: { id: bet.id },
+      data: { status: 'CANCELLED', settledAt: new Date() },
+    })
+
+    const { token } = await loginAs(request, 'cancel_then_file', TEST_PASSWORD)
+    const res = await request.post('/api/bankruptcy', {
+      headers: { authorization: `Bearer ${token}` },
+    })
+    await expectOk(res)
+    expect((await res.json()).credits).toBeGreaterThan(0)
   })
 
   test('requires authentication', async ({ request }) => {
