@@ -161,7 +161,7 @@ function WalletMenu({
             onClick={() => handleBankruptcy(close)}
             title={
               canFile
-                ? 'Reset to 100 cr · permanent stain on your reputation'
+                ? 'Reset to 500 cr · permanent stain on your reputation'
                 : `Available once you hit 0 credits (you have ${credits})`
             }
           >
@@ -173,7 +173,7 @@ function WalletMenu({
             <span className="flex-1">
               Declare bankruptcy
               <span className="ml-1 text-[10px] text-muted-foreground">
-                {canFile ? '(reset to 100 cr)' : `(${credits} cr left)`}
+                {canFile ? '(reset to 500 cr)' : `(${credits} cr left)`}
               </span>
             </span>
           </DropdownItem>

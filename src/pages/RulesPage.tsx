@@ -115,7 +115,7 @@ const RULES: Rule[] = [
     body: (
       <>
         Hit zero credits? Declare bankruptcy for a fresh{' '}
-        <span className="font-mono">100 cr</span>. Must be flat broke — one
+        <span className="font-mono">500 cr</span>. Must be flat broke — one
         credit and you're still solvent. Reputation damaged forever.
       </>
     ),

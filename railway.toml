@@ -14,7 +14,6 @@
 #        OFFICE_TIMEZONE       America/Toronto
 #        ACCESS_TOKEN_TTL_DAYS 30
 #        USER_STARTING_CREDITS 500
-#        BANKRUPTCY_RESET_CREDITS 100
 #   4. Set env on `wheresxi-web` (build arg, not runtime):
 #        VITE_API_BASE_URL     https://<your-api-service-domain>
 [build]

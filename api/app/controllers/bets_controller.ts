@@ -37,7 +37,7 @@ export default class BetsController {
     return ctx.response.ok({ bet })
   }
 
-  /** POST /api/bankruptcy — reset to 100 cr if you're broke */
+  /** POST /api/bankruptcy — reset to 500 cr if you're broke */
   async bankruptcy(ctx: HttpContext) {
     const user = ctx.currentUser
     if (!user) throw new ApiException('Auth required', { status: 401 })
