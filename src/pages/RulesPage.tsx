@@ -116,7 +116,8 @@ const RULES: Rule[] = [
       <>
         Hit zero credits? Declare bankruptcy for a fresh{' '}
         <span className="font-mono">500 cr</span>. Must be flat broke — one
-        credit and you're still solvent. Reputation damaged forever.
+        credit, or one pending bet still in flight, and you're still
+        solvent. Reputation damaged forever.
       </>
     ),
   },
