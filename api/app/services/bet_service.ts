@@ -14,6 +14,14 @@ import MarketService, {
   WINDOW_START_MINUTES,
 } from '#services/market_service'
 
+/**
+ * The credits a user gets dropped back at after declaring bankruptcy.
+ * Matches USER_STARTING_CREDITS so a fresh-from-bankruptcy account is
+ * indistinguishable from a brand-new one. Keep them in sync if either
+ * ever changes.
+ */
+const BANKRUPTCY_RESET_CREDITS = 500
+
 export type PlaceBetInput = {
   userId: string
   marketDayId: string
@@ -391,7 +399,7 @@ export default class BetService {
   // ─── bankruptcy ────────────────────────────────────────────────────────
 
   async declareBankruptcy(userId: string): Promise<{ credits: number }> {
-    const resetTo = Number(process.env.BANKRUPTCY_RESET_CREDITS ?? 500)
+    const resetTo = BANKRUPTCY_RESET_CREDITS
     return this.prisma.$transaction(async (tx) => {
       const user = await tx.user.findUnique({ where: { id: userId } })
       if (!user) throw new ApiException('User not found', { status: 404 })

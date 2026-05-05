@@ -26,7 +26,6 @@ export default await Env.create(new URL('../', import.meta.url), {
   DATABASE_URL: Env.schema.string(),
   ACCESS_TOKEN_TTL_DAYS: Env.schema.number.optional(),
   USER_STARTING_CREDITS: Env.schema.number.optional(),
-  BANKRUPTCY_RESET_CREDITS: Env.schema.number.optional(),
 
   // Offices live in real time zones. All "current week" / market lock
   // calculations happen in this zone (default: Eastern Time).

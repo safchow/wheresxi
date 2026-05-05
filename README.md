@@ -185,7 +185,6 @@ Coverage:
 | `REDIS_URL`               | _none_                   | Falls back to in-memory limiter. |
 | `ACCESS_TOKEN_TTL_DAYS`   | `30`                     |                                  |
 | `USER_STARTING_CREDITS`   | `500`                    |                                  |
-| `BANKRUPTCY_RESET_CREDITS`| `500`                    | Only filable at exactly 0 cr.    |
 
 Frontend reads one build-time arg:
 
