@@ -3,6 +3,6 @@
 # least one matching code owner approves.
 #
 # Solo project today — `safchow` owns everything. Add scoped lines
-# (e.g. `/api/ @backend-team`) as the project grows.
+# (e.g. `/backend/ @backend-team`) as the project grows.
 
 * @safchow

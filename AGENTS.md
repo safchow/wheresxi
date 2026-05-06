@@ -2,7 +2,7 @@
 
 ## Changelog Maintenance
 
-Any coding agent that pushes or opens a PR with user-facing behavior, product copy, deployment behavior, security/auth logic, database schema, or test coverage changes must also update `src/pages/ChangelogPage.tsx`.
+Any coding agent that pushes or opens a PR with user-facing behavior, product copy, deployment behavior, security/auth logic, database schema, or test coverage changes must also update `frontend/pages/ChangelogPage.tsx`.
 
 - Add a new dated, versioned entry at the top of `CHANGELOG` for meaningful changes.
 - Keep bullets high-level and user-readable.

@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Changelog Maintenance
 
-When pushing changes or opening a PR, update `src/pages/ChangelogPage.tsx` if the work changes user-facing behavior, product copy, deployment behavior, auth/security logic, database schema, or test coverage in a meaningful way.
+When pushing changes or opening a PR, update `frontend/pages/ChangelogPage.tsx` if the work changes user-facing behavior, product copy, deployment behavior, auth/security logic, database schema, or test coverage in a meaningful way.
 
 - Add the newest entry at the top of `CHANGELOG`.
 - Use a dated, versioned entry with high-level bullet points.
