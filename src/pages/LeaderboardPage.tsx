@@ -97,7 +97,7 @@ export function LeaderboardPage() {
               <div className="hidden grid-cols-[64px_1fr_120px_120px_100px_120px] gap-3 px-5 py-3 text-[11px] uppercase tracking-wide text-muted-foreground md:grid">
                 <div>Rank</div>
                 <div>Player</div>
-                <div className="text-right">Credits</div>
+                <div className="text-right">Credits earned</div>
                 <div className="text-right">Bankruptcies</div>
                 <div className="text-right">Accuracy</div>
                 <div className="text-right">Bets</div>
@@ -199,7 +199,7 @@ function PodiumCard({ entry }: { entry: LeaderboardRow }) {
           </div>
         </div>
         <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-          <MiniStat label="Credits" value={fmtCr(entry.credits)} />
+          <MiniStat label="Earned" value={fmtCr(entry.creditsEarned)} />
           <MiniStat
             label="Accuracy"
             value={entry.accuracy === null ? '—' : `${entry.accuracy}%`}
@@ -273,7 +273,7 @@ function RowItem({
         </div>
       </div>
       <div className="hidden text-right font-mono text-sm font-semibold tabular-nums md:block">
-        {fmtCr(entry.credits)}
+        {fmtCr(entry.creditsEarned)}
       </div>
       <div className="hidden text-right md:block">
         <span
@@ -295,7 +295,7 @@ function RowItem({
       <div className="col-start-2 md:hidden">
         <div className="mt-0.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground">
           <span className="font-mono text-foreground">
-            {fmtCr(entry.credits)}
+            {fmtCr(entry.creditsEarned)}
           </span>
           <span>{entry.accuracy === null ? '—' : `${entry.accuracy}% acc`}</span>
           <span>

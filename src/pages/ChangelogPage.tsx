@@ -11,6 +11,16 @@ type ChangelogEntry = {
 // schema, auth/security, or test coverage changes. See AGENTS.md.
 const CHANGELOG: ChangelogEntry[] = [
   {
+    version: 'v0.6.0',
+    date: '2026-05-06',
+    title: 'Leaderboard tracks earned credits',
+    changes: [
+      'Changed leaderboard ranking from current wallet balance to credits earned from winning bets.',
+      'Updated leaderboard labels so players see earned credits instead of current credits.',
+      'Kept the existing today, week, and all-time filters applied to earned-credit totals.',
+    ],
+  },
+  {
     version: 'v0.5.0',
     date: '2026-05-05',
     title: 'Bankruptcy gets less exploitable',
