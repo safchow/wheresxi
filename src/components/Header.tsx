@@ -4,8 +4,10 @@ import {
   Coins,
   Loader2,
   LogOut,
+  Moon,
   Receipt,
   Skull,
+  Sun,
 } from 'lucide-react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import {
@@ -16,6 +18,7 @@ import {
 } from '@/components/ui/dropdown'
 import { useDeclareBankruptcy } from '@/api/queries'
 import { useAuth } from '@/hooks/useAuth'
+import { useTheme } from '@/hooks/useTheme'
 import { extractApiError } from '@/lib/errors'
 import { cn } from '@/lib/utils'
 
@@ -80,6 +83,7 @@ function WalletMenu({
   onLogout: () => Promise<void>
 }) {
   const { user } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   const bankruptcy = useDeclareBankruptcy()
   const [error, setError] = useState<string | null>(null)
   const canFile = credits === 0
@@ -145,6 +149,15 @@ function WalletMenu({
           </div>
 
           <DropdownSeparator />
+
+          <DropdownItem onClick={toggleTheme}>
+            {theme === 'dark' ? (
+              <Sun className="h-3.5 w-3.5" />
+            ) : (
+              <Moon className="h-3.5 w-3.5" />
+            )}
+            {theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          </DropdownItem>
 
           <NavLink
             to="/bets"

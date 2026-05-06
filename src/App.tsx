@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { Footer } from '@/components/Footer'
@@ -13,16 +12,6 @@ function App() {
   const { pathname } = useLocation()
   const isPublicRoute = PUBLIC_ROUTES.has(pathname)
   const isAdminRoute = pathname.startsWith('/admin')
-
-  useEffect(() => {
-    const saved = localStorage.getItem('wheresxi-theme')
-    if (
-      saved === 'dark' ||
-      (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-      document.documentElement.classList.add('dark')
-    }
-  }, [])
 
   if (isLoggedIn && isPublicRoute) {
     return <Navigate to="/" replace />
