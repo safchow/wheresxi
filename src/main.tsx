@@ -7,6 +7,7 @@ import { queryClient } from './api/queryClient.ts'
 import App from './App.tsx'
 import { AboutPage } from './pages/AboutPage.tsx'
 import { AdminPage } from './pages/AdminPage.tsx'
+import { ChangelogPage } from './pages/ChangelogPage.tsx'
 import { HomePage } from './pages/HomePage.tsx'
 import { LeaderboardPage } from './pages/LeaderboardPage.tsx'
 import { MyBetsPage } from './pages/MyBetsPage.tsx'
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
       { path: 'rewards', element: <RewardsPage /> },
       { path: 'rules', element: <RulesPage /> },
       { path: 'about', element: <AboutPage /> },
+      { path: 'changelog', element: <ChangelogPage /> },
       { path: 'admin', element: <AdminPage /> },
     ],
   },

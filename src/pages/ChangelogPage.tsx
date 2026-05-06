@@ -1,0 +1,105 @@
+import { Card, CardContent } from '@/components/ui/card'
+
+type ChangelogEntry = {
+  version: string
+  date: string
+  title: string
+  changes: string[]
+}
+
+const CHANGELOG: ChangelogEntry[] = [
+  {
+    version: 'v0.5.0',
+    date: '2026-05-05',
+    title: 'Bankruptcy gets less exploitable',
+    changes: [
+      'Raised the bankruptcy reset to 500 credits so a fresh start actually feels fresh.',
+      'Blocked bankruptcy filings while pending bets are still in flight.',
+      'Kept the bankruptcy rules server-side so clever curl users cannot double-dip.',
+    ],
+  },
+  {
+    version: 'v0.4.0',
+    date: '2026-05-04',
+    title: 'Production hardening',
+    changes: [
+      'Made the web container listen on Railway\'s injected port to fix 502s in production.',
+      'Added branch protection support with CODEOWNERS.',
+      'Removed the bootstrap system user so fake accounts do not leak into leaderboards.',
+      'Added an explicit leaderboard authentication regression test.',
+    ],
+  },
+  {
+    version: 'v0.3.0',
+    date: '2026-05-04',
+    title: 'Admin and invite polish',
+    changes: [
+      'Simplified deploy bootstrap with admin-grant invite links.',
+      'Added a GitHub link in the footer.',
+      'Cleaned up admin copy and footer navigation.',
+    ],
+  },
+  {
+    version: 'v0.2.0',
+    date: '2026-05-04',
+    title: 'Leaderboard and market stability',
+    changes: [
+      'Removed noisy top stat cards from the leaderboard.',
+      'Made weekly market creation race-safe under parallel dashboard requests.',
+      'Refined the About, Login, and Rules copy.',
+    ],
+  },
+  {
+    version: 'v0.1.0',
+    date: '2026-05-04',
+    title: 'Initial wheresxi launch',
+    changes: [
+      'Built the full Taylor-arrival guessing game with credits, fixed multipliers, and weekly Tue/Wed/Thu markets.',
+      'Added invite-only auth, admin resolution tools, refunds, bet cancellation, and bankruptcy.',
+      'Shipped leaderboard, rewards, rules, about, previous-bets, and Taylor dossier pages.',
+      'Added AdonisJS + Prisma + Postgres backend, Playwright API tests, Dockerfiles, and Railway deployment docs.',
+    ],
+  },
+]
+
+export function ChangelogPage() {
+  return (
+    <div className="mx-auto max-w-3xl space-y-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight md:text-[32px] md:leading-[1.1]">
+          Changelog
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          High-level notes for the people tracking Taylor infrastructure like
+          it is a regulated exchange.
+        </p>
+      </div>
+
+      <div className="space-y-4">
+        {CHANGELOG.map((entry) => (
+          <Card key={entry.version}>
+            <CardContent className="p-5">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+                <div>
+                  <div className="font-mono text-xs uppercase tracking-wide text-muted-foreground">
+                    {entry.version}
+                  </div>
+                  <h2 className="text-lg font-semibold">{entry.title}</h2>
+                </div>
+                <time className="font-mono text-xs text-muted-foreground">
+                  {entry.date}
+                </time>
+              </div>
+
+              <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-muted-foreground">
+                {entry.changes.map((change) => (
+                  <li key={change}>{change}</li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  )
+}

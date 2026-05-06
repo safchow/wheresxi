@@ -31,6 +31,9 @@ export function Footer() {
           <Link to="/about" className="hover:text-foreground">
             About
           </Link>
+          <Link to="/changelog" className="hover:text-foreground">
+            Changelog
+          </Link>
           <a
             href="https://github.com/safchow/wheresxi"
             target="_blank"
