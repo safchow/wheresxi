@@ -7,6 +7,8 @@ type ChangelogEntry = {
   changes: string[]
 }
 
+// Keep this list current when shipping meaningful user-facing, deployment,
+// schema, auth/security, or test coverage changes. See AGENTS.md.
 const CHANGELOG: ChangelogEntry[] = [
   {
     version: 'v0.5.0',

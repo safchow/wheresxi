@@ -1,0 +1,13 @@
+---
+description: Keep the public changelog current when shipping changes
+alwaysApply: true
+---
+
+# Changelog Maintenance
+
+When pushing changes or opening a PR, update `src/pages/ChangelogPage.tsx` if the work changes user-facing behavior, product copy, deployment behavior, auth/security logic, database schema, or test coverage in a meaningful way.
+
+- Add the newest entry at the top of `CHANGELOG`.
+- Use a dated, versioned entry with high-level bullet points.
+- Group related commits into one entry; do not dump raw commit messages.
+- Skip only invisible maintenance like formatting-only edits, comment-only edits, or internal refactors with no observable impact.
