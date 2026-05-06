@@ -61,12 +61,11 @@ test.describe('GET /api/leaderboard', () => {
     })
     const { token } = await loginAs(request, 'top', TEST_PASSWORD)
 
-    const res = await request.get('/api/leaderboard?range=all', {
+    const res = await request.get('/api/leaderboard', {
       headers: { authorization: `Bearer ${token}` },
     })
     await expectOk(res)
     const body = await res.json()
-    expect(body.range).toBe('all')
     expect(body.rows.map((r: { username: string }) => r.username)).toEqual(['top', 'mid', 'low'])
     expect(body.rows.map((r: { rank: number }) => r.rank)).toEqual([1, 2, 3])
     expect(body.rows.map((r: { creditsEarned: number }) => r.creditsEarned)).toEqual([300, 150, 50])
@@ -118,7 +117,7 @@ test.describe('GET /api/leaderboard', () => {
     })
 
     const { token } = await loginAs(request, 'aggregator', TEST_PASSWORD)
-    const res = await request.get('/api/leaderboard?range=all', {
+    const res = await request.get('/api/leaderboard', {
       headers: { authorization: `Bearer ${token}` },
     })
     const body = await res.json()
@@ -132,10 +131,11 @@ test.describe('GET /api/leaderboard', () => {
     expect(row.biggestWin).toBe(100)
   })
 
-  test('range filter excludes older bets from stats', async ({ request }) => {
+  test('includes older bets because leaderboard is lifetime-only', async ({ request }) => {
     const user = await createTestUser({ username: 'old_better', credits: 1000 })
     const market = await ensureMarketDay('2026-04-28')
-    // A bet from a year ago — should be filtered out by `today` and `week`.
+    // A bet from a year ago still counts. The leaderboard no longer has
+    // today/week/all-time toggles; earned credits are lifetime-only.
     const oldDate = new Date()
     oldDate.setUTCDate(oldDate.getUTCDate() - 365)
     await testPrisma().bet.create({
@@ -155,36 +155,19 @@ test.describe('GET /api/leaderboard', () => {
     })
 
     const { token } = await loginAs(request, 'old_better', TEST_PASSWORD)
-    const allResponse = await request.get('/api/leaderboard?range=all', {
+    const res = await request.get('/api/leaderboard', {
       headers: { authorization: `Bearer ${token}` },
     })
-    const all = await allResponse.json()
-    const weekResponse = await request.get('/api/leaderboard?range=week', {
-      headers: { authorization: `Bearer ${token}` },
-    })
-    const week = await weekResponse.json()
-
-    expect(all.rows[0].bets).toBe(1)
-    expect(all.rows[0].creditsEarned).toBe(20)
-    expect(week.rows[0].bets).toBe(0)
-    expect(week.rows[0].creditsEarned).toBe(0)
-  })
-
-  test('falls back to "week" for unknown range values', async ({ request }) => {
-    await createTestUser({ username: 'fallback' })
-    const { token } = await loginAs(request, 'fallback', TEST_PASSWORD)
-    const res = await request.get('/api/leaderboard?range=garbage', {
-      headers: { authorization: `Bearer ${token}` },
-    })
-    expect(res.ok()).toBe(true)
     const body = await res.json()
-    expect(body.range).toBe('week')
+
+    expect(body.rows[0].bets).toBe(1)
+    expect(body.rows[0].creditsEarned).toBe(20)
   })
 
   test('requires authentication', async ({ request }) => {
     // Even with seeded data, an unauthenticated caller never sees the board.
     await createTestUser({ username: 'private', credits: 999 })
-    const res = await request.get('/api/leaderboard?range=all')
+    const res = await request.get('/api/leaderboard')
     expect(res.status()).toBe(401)
     await expectErrorCode(res, 'E_UNAUTHENTICATED')
   })

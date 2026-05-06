@@ -104,7 +104,6 @@ export interface LeaderboardRow {
 }
 
 export interface LeaderboardResponse {
-  range: 'today' | 'week' | 'all'
   rows: LeaderboardRow[]
 }
 

@@ -42,8 +42,6 @@ export const queryKeys = {
   },
   leaderboard: {
     root: ['leaderboard'] as const,
-    range: (range: 'today' | 'week' | 'all') =>
-      ['leaderboard', range] as const,
   },
   stats: {
     taylor: ['stats', 'taylor'] as const,
@@ -213,14 +211,11 @@ export function useDeclareBankruptcy() {
 
 /* ─── leaderboard ───────────────────────────────────────────────────── */
 
-export function useLeaderboard(range: 'today' | 'week' | 'all') {
+export function useLeaderboard() {
   return useQuery({
-    queryKey: queryKeys.leaderboard.range(range),
+    queryKey: queryKeys.leaderboard.root,
     queryFn: ({ signal }) =>
-      apiClient.get<LeaderboardResponse>(
-        `/api/leaderboard?range=${range}`,
-        signal,
-      ),
+      apiClient.get<LeaderboardResponse>('/api/leaderboard', signal),
   })
 }
 
