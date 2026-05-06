@@ -92,7 +92,7 @@ export interface LeaderboardRow {
   userId: string
   username: string
   name: string
-  credits: number
+  creditsEarned: number
   bankruptcies: number
   bets: number
   won: number

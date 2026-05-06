@@ -14,12 +14,51 @@ test.beforeEach(async () => {
 })
 
 test.describe('GET /api/leaderboard', () => {
-  test('returns rows ordered by credits descending and ranks them', async ({
-    request,
-  }) => {
-    await createTestUser({ username: 'top', credits: 1000 })
-    await createTestUser({ username: 'mid', credits: 500 })
-    await createTestUser({ username: 'low', credits: 100 })
+  test('returns rows ordered by credits earned descending and ranks them', async ({ request }) => {
+    const top = await createTestUser({ username: 'top', credits: 100 })
+    const mid = await createTestUser({ username: 'mid', credits: 500 })
+    const low = await createTestUser({ username: 'low', credits: 1000 })
+    const market = await ensureMarketDay('2026-04-28')
+    await testPrisma().bet.createMany({
+      data: [
+        {
+          userId: low.id,
+          marketDayId: market.id,
+          granularity: 'HALF_HOUR',
+          bucketStartMinute: 540,
+          bucketEndMinute: 570,
+          wager: 25,
+          multiplier: 2,
+          status: 'WON',
+          payout: 50,
+          settledAt: new Date(),
+        },
+        {
+          userId: mid.id,
+          marketDayId: market.id,
+          granularity: 'HALF_HOUR',
+          bucketStartMinute: 570,
+          bucketEndMinute: 600,
+          wager: 75,
+          multiplier: 2,
+          status: 'WON',
+          payout: 150,
+          settledAt: new Date(),
+        },
+        {
+          userId: top.id,
+          marketDayId: market.id,
+          granularity: 'HALF_HOUR',
+          bucketStartMinute: 600,
+          bucketEndMinute: 630,
+          wager: 150,
+          multiplier: 2,
+          status: 'WON',
+          payout: 300,
+          settledAt: new Date(),
+        },
+      ],
+    })
     const { token } = await loginAs(request, 'top', TEST_PASSWORD)
 
     const res = await request.get('/api/leaderboard?range=all', {
@@ -28,17 +67,12 @@ test.describe('GET /api/leaderboard', () => {
     await expectOk(res)
     const body = await res.json()
     expect(body.range).toBe('all')
-    expect(body.rows.map((r: { username: string }) => r.username)).toEqual([
-      'top',
-      'mid',
-      'low',
-    ])
+    expect(body.rows.map((r: { username: string }) => r.username)).toEqual(['top', 'mid', 'low'])
     expect(body.rows.map((r: { rank: number }) => r.rank)).toEqual([1, 2, 3])
+    expect(body.rows.map((r: { creditsEarned: number }) => r.creditsEarned)).toEqual([300, 150, 50])
   })
 
-  test('aggregates per-user bet stats (won/lost/accuracy/biggestWin)', async ({
-    request,
-  }) => {
+  test('aggregates per-user bet stats (won/lost/accuracy/biggestWin)', async ({ request }) => {
     const user = await createTestUser({ username: 'aggregator', credits: 1000 })
     const market = await ensureMarketDay('2026-04-28')
     // Two won, one lost.
@@ -92,6 +126,7 @@ test.describe('GET /api/leaderboard', () => {
     expect(row.bets).toBe(3)
     expect(row.won).toBe(2)
     expect(row.lost).toBe(1)
+    expect(row.creditsEarned).toBe(120)
     // accuracy = 2 / (2+1) ≈ 67%
     expect(row.accuracy).toBe(67)
     expect(row.biggestWin).toBe(100)
@@ -120,19 +155,19 @@ test.describe('GET /api/leaderboard', () => {
     })
 
     const { token } = await loginAs(request, 'old_better', TEST_PASSWORD)
-    const all = await (
-      await request.get('/api/leaderboard?range=all', {
-        headers: { authorization: `Bearer ${token}` },
-      })
-    ).json()
-    const week = await (
-      await request.get('/api/leaderboard?range=week', {
-        headers: { authorization: `Bearer ${token}` },
-      })
-    ).json()
+    const allResponse = await request.get('/api/leaderboard?range=all', {
+      headers: { authorization: `Bearer ${token}` },
+    })
+    const all = await allResponse.json()
+    const weekResponse = await request.get('/api/leaderboard?range=week', {
+      headers: { authorization: `Bearer ${token}` },
+    })
+    const week = await weekResponse.json()
 
     expect(all.rows[0].bets).toBe(1)
+    expect(all.rows[0].creditsEarned).toBe(20)
     expect(week.rows[0].bets).toBe(0)
+    expect(week.rows[0].creditsEarned).toBe(0)
   })
 
   test('falls back to "week" for unknown range values', async ({ request }) => {
@@ -142,7 +177,8 @@ test.describe('GET /api/leaderboard', () => {
       headers: { authorization: `Bearer ${token}` },
     })
     expect(res.ok()).toBe(true)
-    expect((await res.json()).range).toBe('week')
+    const body = await res.json()
+    expect(body.range).toBe('week')
   })
 
   test('requires authentication', async ({ request }) => {
