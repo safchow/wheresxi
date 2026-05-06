@@ -16,7 +16,7 @@ const CHANGELOG: ChangelogEntry[] = [
     title: 'Theme toggle gets browser coverage',
     changes: [
       'Added a frontend Playwright test for the wallet theme toggle and cookie persistence.',
-      'Added a root browser Playwright setup for lightweight UI regression tests.',
+      'Added a separate frontend Playwright workflow so UI regression tests run on pull requests.',
     ],
   },
   {
