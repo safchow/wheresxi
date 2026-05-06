@@ -3,6 +3,11 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { useTaylorStats } from '@/api/queries'
+import {
+  formatCompactNumber,
+  formatMinute24,
+  formatMinuteWithMeridiem,
+} from '@/lib/format'
 import { cn } from '@/lib/utils'
 import type { BustReason, RecentArrival } from '@/api/types'
 
@@ -10,26 +15,6 @@ const BUST_LABEL: Record<BustReason, string> = {
   BEFORE_NINE: 'Before 9 AM',
   AFTER_TENTHIRTY: 'After 10:30',
   WFH_SICK: 'WFH/sick',
-}
-
-function formatTime(min: number): string {
-  const h24 = Math.floor(min / 60)
-  const mm = min % 60
-  const h12 = h24 % 12 === 0 ? 12 : h24 % 12
-  const ampm = h24 >= 12 ? 'PM' : 'AM'
-  return `${h12}:${mm.toString().padStart(2, '0')} ${ampm}`
-}
-
-function formatTimeShort(min: number): string {
-  const h24 = Math.floor(min / 60)
-  const mm = min % 60
-  return `${h24.toString().padStart(2, '0')}:${mm.toString().padStart(2, '0')}`
-}
-
-function formatTraderCount(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
-  if (n >= 10_000) return `${(n / 1_000).toFixed(1)}K`
-  return n.toLocaleString()
 }
 
 function describeArrival(a: RecentArrival): string {
@@ -43,7 +28,7 @@ function describeArrival(a: RecentArrival): string {
     case 'busted':
       return BUST_LABEL[a.bustReason]
     case 'arrived':
-      return formatTimeShort(a.minute)
+      return formatMinute24(a.minute)
   }
 }
 
@@ -84,7 +69,7 @@ export function TaylorDossier() {
                 ? '—'
                 : data?.avgArrivalMinute == null
                   ? 'no data'
-                  : formatTime(data.avgArrivalMinute)
+                  : formatMinuteWithMeridiem(data.avgArrivalMinute)
             }
             sub={
               data && data.arrivalSampleSize > 0
@@ -97,7 +82,14 @@ export function TaylorDossier() {
           <Stat
             icon={<Users className="h-4 w-4" />}
             label="Traders watching"
-            value={isLoading ? '—' : formatTraderCount(data?.traderCount ?? 0)}
+            value={
+              isLoading
+                ? '—'
+                : formatCompactNumber(data?.traderCount ?? 0, {
+                    compactThousandsAt: 10_000,
+                    localeBelowThreshold: true,
+                  })
+            }
           />
         </div>
 

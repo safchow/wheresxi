@@ -14,7 +14,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useCancelBet, useMyBets } from '@/api/queries'
+import { describeBet } from '@/lib/bets'
 import { extractApiError } from '@/lib/errors'
+import { formatShortWeekdayMonthDay } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import type { Bet, BetStatus } from '@/api/types'
 
@@ -34,35 +36,6 @@ const STATUS_COLOR: Record<BetStatus, string> = {
   LOST: 'border-no/40 bg-no/10 text-no',
   REFUNDED: 'border-amber-400/40 bg-amber-400/10 text-amber-500',
   CANCELLED: 'border-border bg-muted text-muted-foreground',
-}
-
-const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const MONTH_NAMES = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-]
-
-function formatDay(iso?: string) {
-  if (!iso) return '—'
-  const d = new Date(iso)
-  return `${DAY_NAMES[d.getUTCDay()]} ${MONTH_NAMES[d.getUTCMonth()]} ${d.getUTCDate()}`
-}
-
-function formatTime(min: number) {
-  const h24 = Math.floor(min / 60)
-  const mm = min % 60
-  const h12 = h24 % 12 === 0 ? 12 : h24 % 12
-  return `${h12}:${mm.toString().padStart(2, '0')}`
-}
-
-function describeBet(bet: Bet) {
-  if (bet.granularity === 'EXACT') {
-    return `${formatTime(bet.exactMinute ?? 0)} AM exact`
-  }
-  if (bet.bucketStartMinute != null && bet.bucketEndMinute != null) {
-    return `${formatTime(bet.bucketStartMinute)} – ${formatTime(bet.bucketEndMinute)}`
-  }
-  return '—'
 }
 
 export function MyBetsPage() {
@@ -267,7 +240,7 @@ function BetRow({ bet }: { bet: Bet }) {
           <div className="flex items-center gap-2 text-sm">
             <span className="font-medium">{describeBet(bet)}</span>
             <span className="text-xs text-muted-foreground">
-              {formatDay(bet.marketDay?.date)}
+              {formatShortWeekdayMonthDay(bet.marketDay?.date)}
             </span>
           </div>
           <div className="font-mono text-[11px] text-muted-foreground tabular-nums">

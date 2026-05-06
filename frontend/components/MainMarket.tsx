@@ -13,6 +13,12 @@ import { Input } from '@/components/ui/input'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAuth } from '@/hooks/useAuth'
 import { extractApiError } from '@/lib/errors'
+import {
+  formatCompactNumber,
+  formatMinute12,
+  formatShortMonthDay,
+  formatShortWeekday,
+} from '@/lib/format'
 import { cn } from '@/lib/utils'
 import {
   useAllWeekMarkets,
@@ -57,46 +63,6 @@ function minutesForHour(h: number) {
   return Array.from({ length: max + 1 }, (_, i) => i)
 }
 
-function formatVol(n: number) {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`
-  return `${n}`
-}
-
-function formatTime(mins: number): string {
-  const m = ((mins % (24 * 60)) + 24 * 60) % (24 * 60)
-  const h24 = Math.floor(m / 60)
-  const mm = m % 60
-  const h12 = h24 % 12 === 0 ? 12 : h24 % 12
-  return `${h12}:${mm.toString().padStart(2, '0')}`
-}
-
-const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const MONTH_NAMES = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-]
-
-function formatDay(iso: string) {
-  const d = new Date(iso)
-  return DAY_NAMES[d.getUTCDay()]
-}
-
-function formatDate(iso: string) {
-  const d = new Date(iso)
-  return `${MONTH_NAMES[d.getUTCMonth()]} ${d.getUTCDate()}`
-}
-
 export function MainMarket() {
   const [granularity, setGranularity] = useState<Granularity>('HALF_HOUR')
   // All four granularities are fetched on mount in parallel; switching tabs
@@ -137,7 +103,7 @@ export function MainMarket() {
             </Badge>
             <Badge variant="outline" className="gap-1 rounded-md">
               <Users className="h-3 w-3" />
-              {formatVol(selectedView?.totalGuesses ?? 0)} guesses
+              {formatCompactNumber(selectedView?.totalGuesses ?? 0)} guesses
             </Badge>
             <span className="ml-auto flex items-center gap-1.5 text-xs text-muted-foreground">
               {selectedView?.market.status === 'RESOLVED' ? (
@@ -201,10 +167,10 @@ export function MainMarket() {
                         className="flex flex-col gap-0.5 py-2 h-auto"
                       >
                         <span className="text-sm font-medium">
-                          {formatDay(market.date)}
+                          {formatShortWeekday(market.date)}
                         </span>
                         <span className="text-[11px] font-mono text-muted-foreground">
-                          {formatDate(market.date)}
+                          {formatShortMonthDay(market.date)}
                         </span>
                         {(market.status !== 'OPEN' || market.locked) && (
                           <span
@@ -633,7 +599,7 @@ function WagerPanel({
 
   const guessLabel =
     granularity === 'EXACT'
-      ? `${formatTime(exactMinuteTotal)} AM`
+      ? `${formatMinute12(exactMinuteTotal)} AM`
       : selectedBucket?.label ?? '—'
 
   const guessCount =
@@ -671,7 +637,7 @@ function WagerPanel({
         })
       }
       setSuccess(
-        `Locked in ${wager} cr on ${guessLabel} for ${formatDay(market.date)} ${formatDate(market.date)}.`,
+        `Locked in ${wager} cr on ${guessLabel} for ${formatShortWeekday(market.date)} ${formatShortMonthDay(market.date)}.`,
       )
     } catch (err) {
       setError(extractApiError(err) ?? 'Could not place guess')
@@ -681,7 +647,8 @@ function WagerPanel({
   return (
     <aside className="w-full shrink-0 self-start rounded-lg border border-border bg-secondary/30 p-4 lg:w-80">
       <div className="text-xs uppercase tracking-wide text-muted-foreground">
-        Your guess for {formatDay(market.date)} {formatDate(market.date)}
+        Your guess for {formatShortWeekday(market.date)}{' '}
+        {formatShortMonthDay(market.date)}
       </div>
       <div className="mt-1 font-mono text-2xl font-semibold tabular-nums">
         {guessLabel}

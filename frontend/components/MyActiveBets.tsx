@@ -6,47 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useCancelBet, useMyBets } from '@/api/queries'
 import { extractApiError } from '@/lib/errors'
 import { useAuth } from '@/hooks/useAuth'
+import { describeBet } from '@/lib/bets'
+import { formatShortWeekdayMonthDay } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import type { Bet } from '@/api/types'
-
-const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const MONTH_NAMES = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-]
-
-function formatTime(min: number): string {
-  const h24 = Math.floor(min / 60)
-  const mm = min % 60
-  const h12 = h24 % 12 === 0 ? 12 : h24 % 12
-  return `${h12}:${mm.toString().padStart(2, '0')}`
-}
-
-function formatDay(iso?: string) {
-  if (!iso) return '—'
-  const d = new Date(iso)
-  return `${DAY_NAMES[d.getUTCDay()]} ${MONTH_NAMES[d.getUTCMonth()]} ${d.getUTCDate()}`
-}
-
-function describeBet(bet: Bet): string {
-  if (bet.granularity === 'EXACT') {
-    return `${formatTime(bet.exactMinute ?? 0)} AM exact`
-  }
-  if (bet.bucketStartMinute != null && bet.bucketEndMinute != null) {
-    return `${formatTime(bet.bucketStartMinute)} – ${formatTime(bet.bucketEndMinute)}`
-  }
-  return '—'
-}
 
 export function MyActiveBets() {
   const { isLoggedIn } = useAuth()
@@ -109,7 +72,7 @@ function ActiveBetRow({ bet }: { bet: Bet }) {
     <li className="flex flex-col gap-2 px-5 py-3 text-sm sm:flex-row sm:items-center">
       <div className="flex min-w-0 flex-1 items-center gap-3">
         <Badge variant="outline" className="shrink-0 rounded-md font-mono">
-          {formatDay(bet.marketDay?.date)}
+          {formatShortWeekdayMonthDay(bet.marketDay?.date)}
         </Badge>
         <div className="min-w-0">
           <div className="truncate font-medium">{describeBet(bet)}</div>
