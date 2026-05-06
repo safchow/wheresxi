@@ -17,7 +17,7 @@ const CHANGELOG: ChangelogEntry[] = [
     changes: [
       'Changed leaderboard ranking from current wallet balance to credits earned from winning bets.',
       'Updated leaderboard labels so players see earned credits instead of current credits.',
-      'Kept the existing today, week, and all-time filters applied to earned-credit totals.',
+      'Removed the Today, This week, and All-time leaderboard toggles so the board is always lifetime earned credits.',
     ],
   },
   {

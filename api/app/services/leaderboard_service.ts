@@ -1,8 +1,6 @@
 import { inject } from '@adonisjs/core'
 import { PrismaClient } from '@prisma/client'
 
-export type LeaderboardRange = 'today' | 'week' | 'all'
-
 export type LeaderboardRow = {
   rank: number
   userId: string
@@ -25,12 +23,11 @@ export default class LeaderboardService {
   constructor(private prisma: PrismaClient) {}
 
   /**
-   * Top N players plus aggregated stats. The range filters which bets
-   * contribute to bets/won/lost/accuracy/creditsEarned/biggestWin counts;
-   * bankruptcies are always lifetime since they're cumulative state.
+   * Top N players plus lifetime aggregated stats, sorted by credits earned
+   * from WON bet payouts. Bankruptcies are also lifetime since they're
+   * cumulative state.
    */
-  async listTop(range: LeaderboardRange, limit = 50): Promise<LeaderboardRow[]> {
-    const since = LeaderboardService.rangeStart(range)
+  async listTop(limit = 50): Promise<LeaderboardRow[]> {
     const users = await this.prisma.user.findMany({
       orderBy: [{ username: 'asc' }],
       select: {
@@ -49,7 +46,6 @@ export default class LeaderboardService {
       by: ['userId', 'status'],
       where: {
         userId: { in: userIds },
-        ...(since ? { createdAt: { gte: since } } : {}),
       },
       _count: { _all: true },
       _sum: { payout: true },
@@ -98,8 +94,7 @@ export default class LeaderboardService {
       .map((u) => {
         const s = byUser.get(u.id) ?? blank()
         const settled = s.won + s.lost
-        const accuracy =
-          settled === 0 ? null : Math.round((s.won / settled) * 100)
+        const accuracy = settled === 0 ? null : Math.round((s.won / settled) * 100)
         return {
           rank: 0,
           userId: u.id,
@@ -124,19 +119,5 @@ export default class LeaderboardService {
       })
       .slice(0, limit)
       .map((row, idx) => ({ ...row, rank: idx + 1 }))
-  }
-
-  static rangeStart(range: LeaderboardRange): Date | null {
-    const now = new Date()
-    if (range === 'all') return null
-    if (range === 'today') {
-      return new Date(
-        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
-      )
-    }
-    // week — last 7 days rolling
-    const d = new Date(now)
-    d.setUTCDate(d.getUTCDate() - 7)
-    return d
   }
 }

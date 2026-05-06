@@ -1,16 +1,12 @@
-import { useState } from 'react'
 import { Crown, Loader2, Medal, Skull, Trophy } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAuth } from '@/hooks/useAuth'
 import { extractApiError } from '@/lib/errors'
 import { cn } from '@/lib/utils'
 import { useLeaderboard } from '@/api/queries'
 import type { LeaderboardRow } from '@/api/types'
-
-type Range = 'today' | 'week' | 'all'
 
 function fmtCr(n: number) {
   return `${n.toLocaleString()} cr`
@@ -27,9 +23,7 @@ function avatarGradient(seed: string): string {
 
 export function LeaderboardPage() {
   const { user: me } = useAuth()
-  const [range, setRange] = useState<Range>('week')
-  const { data, isLoading, isError, error, isFetching } =
-    useLeaderboard(range)
+  const { data, isLoading, isError, error, isFetching } = useLeaderboard()
   const rows = data?.rows ?? []
   const podium = rows.slice(0, 3)
   const tableRows = rows.slice(3)
@@ -40,27 +34,14 @@ export function LeaderboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight md:text-[32px] md:leading-[1.1]">
-            Leaderboard
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground sm:whitespace-nowrap">
-            The people who have correctly guessed Taylor's comings (and goings)
-            more than you.
-          </p>
-        </div>
-        <Tabs
-          value={range}
-          onValueChange={(v) => setRange(v as Range)}
-          className="sm:ml-auto sm:w-auto"
-        >
-          <TabsList>
-            <TabsTrigger value="today">Today</TabsTrigger>
-            <TabsTrigger value="week">This week</TabsTrigger>
-            <TabsTrigger value="all">All-time</TabsTrigger>
-          </TabsList>
-        </Tabs>
+      <div className="min-w-0">
+        <h1 className="text-2xl font-semibold tracking-tight md:text-[32px] md:leading-[1.1]">
+          Leaderboard
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground sm:whitespace-nowrap">
+          The people who have correctly guessed Taylor's comings (and goings)
+          more than you.
+        </p>
       </div>
 
       {isLoading ? (
