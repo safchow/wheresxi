@@ -11,6 +11,16 @@ type ChangelogEntry = {
 // schema, auth/security, or test coverage changes. See AGENTS.md.
 const CHANGELOG: ChangelogEntry[] = [
   {
+    version: 'v0.8.0',
+    date: '2026-05-06',
+    title: 'Theme preferences get explicit',
+    changes: [
+      'Added a light/dark mode toggle to the wallet dropdown.',
+      'Persisted theme preference in a cookie so the selected mode follows the user across visits.',
+      'Defaulted new sessions to dark mode so light mode only appears when deliberately selected.',
+    ],
+  },
+  {
     version: 'v0.7.0',
     date: '2026-05-06',
     title: 'Pull requests get automated checks',
