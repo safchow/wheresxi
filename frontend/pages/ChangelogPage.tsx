@@ -11,6 +11,15 @@ type ChangelogEntry = {
 // schema, auth/security, or test coverage changes. See AGENTS.md.
 const CHANGELOG: ChangelogEntry[] = [
   {
+    version: 'v0.9.1',
+    date: '2026-05-06',
+    title: 'Formatting cleanup gets regression coverage',
+    changes: [
+      'Added frontend Playwright coverage for market, bet, and Taylor dossier formatting.',
+      'Protected shared date, time, count, and bet-label helpers from visible regressions.',
+    ],
+  },
+  {
     version: 'v0.9.0',
     date: '2026-05-06',
     title: 'Project folders get clearer names',
