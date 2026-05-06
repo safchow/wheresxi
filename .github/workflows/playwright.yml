@@ -1,0 +1,54 @@
+name: Playwright API Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  api-playwright:
+    name: API Playwright suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: wheresxi
+          POSTGRES_PASSWORD: wheresxi_dev
+          POSTGRES_DB: wheresxi_test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U wheresxi -d wheresxi_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    defaults:
+      run:
+        working-directory: api
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+
+      - name: Install API dependencies
+        run: npm ci
+
+      - name: Apply test database migrations
+        run: npm run test:e2e:setup
+
+      - name: Run Playwright API tests
+        run: npm run test:e2e

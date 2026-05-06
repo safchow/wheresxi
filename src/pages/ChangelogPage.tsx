@@ -11,6 +11,15 @@ type ChangelogEntry = {
 // schema, auth/security, or test coverage changes. See AGENTS.md.
 const CHANGELOG: ChangelogEntry[] = [
   {
+    version: 'v0.7.0',
+    date: '2026-05-06',
+    title: 'Pull requests get automated checks',
+    changes: [
+      'Added a GitHub Actions workflow that runs the Playwright API test suite on pull requests.',
+      'Provisioned a Postgres service in CI so database-backed API tests exercise migrations and real queries.',
+    ],
+  },
+  {
     version: 'v0.6.0',
     date: '2026-05-06',
     title: 'Leaderboard tracks earned credits',
