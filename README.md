@@ -13,7 +13,7 @@ his Steam activity. He is not.
 
 ```
 .
-├── api/                         AdonisJS 6 + Prisma + Postgres + Redis backend
+├── backend/                     AdonisJS 6 + Prisma + Postgres + Redis backend
 │   ├── app/
 │   │   ├── controllers/         Thin: parse → service → response
 │   │   ├── services/            All business logic, IoC-injected
@@ -26,7 +26,7 @@ his Steam activity. He is not.
 │   ├── commands/                node ace make:invite / promote:admin
 │   ├── docker-compose.yml       Local Postgres on :5433
 │   └── Dockerfile               Multi-stage build, runs migrations on boot
-└── src/                         React + Vite + Tailwind + shadcn-style frontend
+└── frontend/                    React + Vite + Tailwind + shadcn-style frontend
     ├── api/                     Typed fetch client + TanStack Query hooks
     ├── components/              MainMarket, MyActiveBets, TaylorDossier, …
     ├── pages/                   Home, MyBets, Leaderboard, Admin, Login, Signup, …
@@ -45,7 +45,7 @@ DEPLOY.md                        Step-by-step Railway recipe
 | Routing      | react-router-dom                                 |
 | Backend      | AdonisJS 6 · Prisma 6 · VineJS · argon2          |
 | Storage      | PostgreSQL 16 · Redis (rate limiter, optional)   |
-| Tests        | Playwright (`@playwright/test`) — API only       |
+| Tests        | Playwright (`@playwright/test`) — API + frontend |
 | Auth         | DB-backed bearer tokens (`wxi_…`), sha256-hashed |
 | Time zone    | `America/Toronto` via `date-fns-tz`              |
 
@@ -61,7 +61,7 @@ DEPLOY.md                        Step-by-step Railway recipe
 
 ```bash
 # 1. Postgres
-cd api
+cd backend
 docker compose up -d                    # postgres on localhost:5433
 
 # 2. Backend deps + schema
@@ -76,7 +76,7 @@ npm install
 ### Run
 
 ```bash
-# Backend (in api/)
+# Backend (in backend/)
 npm run dev                             # http://localhost:3333
 
 # Frontend (in repo root)
@@ -85,7 +85,7 @@ npm run dev                             # http://localhost:5173
 
 ### Bootstrap your first user
 
-There's no seed admin. From `api/`:
+There's no seed admin. From `backend/`:
 
 ```bash
 node ace make:invite                    # mints invite, prints signup link
@@ -100,15 +100,16 @@ CLI — see `DEPLOY.md` for the snippet.
 
 | Where    | Command                                | What                                   |
 | -------- | -------------------------------------- | -------------------------------------- |
-| `api/`   | `npm run dev`                          | API on :3333 with HMR                  |
-| `api/`   | `npm run typecheck`                    | tsc --noEmit                           |
-| `api/`   | `npm run test:e2e`                     | Playwright suite (~9s, 86 tests)       |
-| `api/`   | `npm run test:e2e:setup`               | Apply migrations to `wheresxi_test`    |
-| `api/`   | `npx prisma studio`                    | DB GUI (uses `.env`)                   |
-| `api/`   | `node ace make:invite`                 | Mint a signup invite                   |
-| `api/`   | `node ace promote:admin <username>`    | Promote a user to ADMIN                |
+| `backend/` | `npm run dev`                        | API on :3333 with HMR                  |
+| `backend/` | `npm run typecheck`                  | tsc --noEmit                           |
+| `backend/` | `npm run test:e2e`                   | Playwright API suite                   |
+| `backend/` | `npm run test:e2e:setup`             | Apply migrations to `wheresxi_test`    |
+| `backend/` | `npx prisma studio`                  | DB GUI (uses `.env`)                   |
+| `backend/` | `node ace make:invite`               | Mint a signup invite                   |
+| `backend/` | `node ace promote:admin <username>`  | Promote a user to ADMIN                |
 | root     | `npm run dev`                          | Frontend on :5173                      |
 | root     | `npm run build`                        | tsc + vite build                       |
+| root     | `npm run test:e2e`                     | Playwright frontend suite              |
 
 ## Architecture
 
@@ -150,7 +151,7 @@ Disabled entirely when `NODE_ENV=test`.
 ## Testing
 
 ```bash
-cd api
+cd backend
 npm run test:e2e                         # full suite
 npm run test:e2e -- auth.spec.ts         # one file
 npm run test:e2e -- -g "bankruptcy"      # by name
@@ -174,7 +175,7 @@ Coverage:
 
 ## Environment
 
-`api/.env` (see `.env.example` for the full list):
+`backend/.env` (see `.env.example` for the full list):
 
 | Var                       | Default                  | Notes                            |
 | ------------------------- | ------------------------ | -------------------------------- |
@@ -198,7 +199,7 @@ See [`DEPLOY.md`](./DEPLOY.md) for the full Railway recipe. TL;DR:
 
 ```
 Postgres plugin ──┐
-                  ├─→ wheresxi-api  (Dockerfile, root: api/)
+                  ├─→ wheresxi-api  (Dockerfile, root: backend/)
 Redis plugin    ──┤
                   └─→ wheresxi-web  (Dockerfile, root: ./)
                                     build arg: VITE_API_BASE_URL

@@ -11,6 +11,16 @@ type ChangelogEntry = {
 // schema, auth/security, or test coverage changes. See AGENTS.md.
 const CHANGELOG: ChangelogEntry[] = [
   {
+    version: 'v0.9.0',
+    date: '2026-05-06',
+    title: 'Project folders get clearer names',
+    changes: [
+      'Renamed the React app folder from src to frontend.',
+      'Renamed the Adonis API folder from api to backend.',
+      'Updated build, test, deployment, and documentation references for the new layout.',
+    ],
+  },
+  {
     version: 'v0.8.1',
     date: '2026-05-06',
     title: 'Theme toggle gets browser coverage',

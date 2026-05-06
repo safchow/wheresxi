@@ -20,8 +20,8 @@ Two services + two managed plugins:
    plugins.
 
 2. **Create the API service** (`wheresxi-api`)
-   - Source: this repo, root directory `api`
-   - Builder: Dockerfile (`api/Dockerfile`)
+   - Source: this repo, root directory `backend`
+   - Builder: Dockerfile (`backend/Dockerfile`)
    - Generated public domain: `https://wheresxi-api-production.up.railway.app`
      (or your own domain)
    - Env vars (Railway auto-fills the first two from the plugins):
@@ -88,6 +88,6 @@ ALLOWED_ORIGINS=https://wheresxi.example,https://wheresxi-preview.up.railway.app
 Both Dockerfiles also work locally:
 ```bash
 docker compose up -d                       # postgres
-cd api && docker build -t wheresxi-api .
+cd backend && docker build -t wheresxi-api .
 cd ..  && docker build -t wheresxi-web --build-arg VITE_API_BASE_URL=http://localhost:3333 .
 ```

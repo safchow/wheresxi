@@ -1,4 +1,4 @@
-name: Playwright API Tests
+name: Playwright Backend Tests
 
 on:
   pull_request:
@@ -9,8 +9,8 @@ permissions:
   contents: read
 
 jobs:
-  api-playwright:
-    name: API Playwright suite
+  backend-playwright:
+    name: Backend Playwright suite
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -31,7 +31,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: api
+        working-directory: backend
 
     steps:
       - name: Check out repo
@@ -42,13 +42,13 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: api/package-lock.json
+          cache-dependency-path: backend/package-lock.json
 
-      - name: Install API dependencies
+      - name: Install backend dependencies
         run: npm ci
 
       - name: Apply test database migrations
         run: npm run test:e2e:setup
 
-      - name: Run Playwright API tests
+      - name: Run Playwright backend tests
         run: npm run test:e2e

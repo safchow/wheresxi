@@ -5,7 +5,7 @@ import env from '#start/env'
 
 /**
  * The market window — Taylor never arrives outside this on a non-bust day.
- * Mirrored by the frontend (`src/lib/buckets.ts`).
+ * Mirrored by the frontend (`frontend/lib/buckets.ts`).
  */
 export const WINDOW_START_MINUTES = 9 * 60
 export const WINDOW_END_MINUTES = 10 * 60 + 30 // exclusive
