@@ -11,6 +11,15 @@ type ChangelogEntry = {
 // schema, auth/security, or test coverage changes. See AGENTS.md.
 const CHANGELOG: ChangelogEntry[] = [
   {
+    version: 'v0.8.1',
+    date: '2026-05-06',
+    title: 'Theme toggle gets browser coverage',
+    changes: [
+      'Added a frontend Playwright test for the wallet theme toggle and cookie persistence.',
+      'Added a root browser Playwright setup for lightweight UI regression tests.',
+    ],
+  },
+  {
     version: 'v0.8.0',
     date: '2026-05-06',
     title: 'Theme preferences get explicit',
