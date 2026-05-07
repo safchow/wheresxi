@@ -4,7 +4,7 @@
     "client_url": "http://localhost:5173"
   },
   "production": {
-    "base_url": "https://wheresxi-api-production.up.railway.app",
-    "client_url": "https://wheresxi.example"
+    "base_url": "https://api.wheresxi.com",
+    "client_url": "https://wheresxi.com"
   }
 }
