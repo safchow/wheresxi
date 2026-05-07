@@ -2,11 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { apiClient } from '@/client/client'
-import {
-  useAllWeekMarkets,
-  useExactMinuteGuesses,
-  useWeekMarkets,
-} from '@/client/queries'
+import { useAllWeekMarkets, useExactMinuteGuesses } from '@/client/queries'
 import { createHarness } from '../../helpers/queryHarness'
 
 vi.mock('@/client/client', () => ({
@@ -25,19 +21,6 @@ beforeEach(() => {
 })
 
 describe('market query hooks', () => {
-  it('fetches a week market for the requested granularity', async () => {
-    const { wrapper } = createHarness()
-
-    renderHook(() => useWeekMarkets('EXACT'), { wrapper })
-
-    await waitFor(() =>
-      expect(mockedApiClient.get).toHaveBeenCalledWith(
-        '/api/market/week?granularity=EXACT',
-        expect.any(AbortSignal),
-      ),
-    )
-  })
-
   it('warms every week market granularity in parallel', async () => {
     const { wrapper } = createHarness()
 

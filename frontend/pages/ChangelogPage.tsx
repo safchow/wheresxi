@@ -11,6 +11,16 @@ type ChangelogEntry = {
 // schema, auth/security, or test coverage changes. See AGENTS.md.
 const CHANGELOG: ChangelogEntry[] = [
   {
+    version: 'v0.9.3',
+    date: '2026-05-07',
+    title: 'Scaffold cleanup',
+    changes: [
+      'Removed unused Vite/React scaffold SVGs and the placeholder hero image.',
+      'Removed unused shadcn exports (CardDescription, CardFooter, buttonVariants) so the UI surface only ships what the app actually uses.',
+      'Removed the unused useWeekMarkets hook and the test that covered only it.',
+    ],
+  },
+  {
     version: 'v0.9.2',
     date: '2026-05-07',
     title: 'Frontend client folder gets a clearer name',

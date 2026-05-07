@@ -3,23 +3,6 @@ import { apiClient } from '@/client/client'
 import { queryKeys } from '@/client/queryKeys'
 import type { Granularity, WeekMarketsResponse } from '@/client/types'
 
-/** Shared fetcher so the single-granularity hook and the all-granularity
- *  prefetcher can't drift apart. */
-const weekMarketsFetcher = (granularity: Granularity, signal?: AbortSignal) =>
-  apiClient.get<WeekMarketsResponse>(
-    `/api/market/week?granularity=${granularity}`,
-    signal,
-  )
-
-export function useWeekMarkets(granularity: Granularity) {
-  return useQuery({
-    queryKey: queryKeys.market.week(granularity),
-    queryFn: ({ signal }) => weekMarketsFetcher(granularity, signal),
-    refetchInterval: 15_000,
-    placeholderData: keepPreviousData,
-  })
-}
-
 /**
  * Fetch every granularity's bucket grid in parallel on mount. Only the
  * `active` granularity polls; the rest sit warm in the cache so switching
@@ -36,7 +19,10 @@ export function useAllWeekMarkets(active: Granularity) {
     queries: granularities.map((g) => ({
       queryKey: queryKeys.market.week(g),
       queryFn: ({ signal }: { signal?: AbortSignal }) =>
-        weekMarketsFetcher(g, signal),
+        apiClient.get<WeekMarketsResponse>(
+          `/api/market/week?granularity=${g}`,
+          signal,
+        ),
       // Only the user's currently-selected tab polls; the others were
       // fetched once on mount and are happy sitting in cache until clicked.
       refetchInterval: g === active ? 15_000 : false,
