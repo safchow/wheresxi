@@ -11,6 +11,16 @@ type ChangelogEntry = {
 // schema, auth/security, or test coverage changes. See AGENTS.md.
 const CHANGELOG: ChangelogEntry[] = [
   {
+    version: 'v0.9.4',
+    date: '2026-05-07',
+    title: 'Per-service npm scripts',
+    changes: [
+      'Added explicit dev:frontend, dev:backend, build:frontend, build:backend, lint:frontend, lint:backend, test:frontend:unit, test:frontend:e2e, and test:backend:e2e scripts at the repo root.',
+      'Updated the README so onboarding and local commands lead with the per-service names.',
+      'Kept the unscoped aliases (dev, build, lint, test:unit, test:e2e) intact so the Dockerfile and CI workflows continue to work unchanged.',
+    ],
+  },
+  {
     version: 'v0.9.3',
     date: '2026-05-07',
     title: 'Scaffold cleanup',
