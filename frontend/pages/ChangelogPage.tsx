@@ -11,6 +11,16 @@ type ChangelogEntry = {
 // schema, auth/security, or test coverage changes. See AGENTS.md.
 const CHANGELOG: ChangelogEntry[] = [
   {
+    version: 'v0.9.5',
+    date: '2026-05-07',
+    title: 'Frontend lint runs on every pull request',
+    changes: [
+      'Added a Lint Frontend GitHub Actions workflow that runs ESLint on each PR.',
+      'Scoped the root ESLint config to frontend code so the backend service can stay on its own toolchain.',
+      'Cleaned up frontend lint errors: dropped an unused shadcn export, removed a no-op interface, and refactored MainMarket to derive the selected day and reset wager feedback without setting state from inside an effect.',
+    ],
+  },
+  {
     version: 'v0.9.4',
     date: '2026-05-07',
     title: 'Per-service npm scripts',
