@@ -29,26 +29,24 @@ jobs:
           --health-timeout 5s
           --health-retries 10
 
-    defaults:
-      run:
-        working-directory: backend
-
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
 
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: backend/package-lock.json
+          cache: pnpm
 
-      - name: Install backend dependencies
-        run: npm ci
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Apply test database migrations
-        run: npm run test:e2e:setup
+        run: pnpm test:backend:e2e:setup
 
       - name: Run Playwright backend tests
-        run: npm run test:e2e
+        run: pnpm test:backend:e2e

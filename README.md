@@ -34,7 +34,9 @@ his Steam activity. He is not.
 │   ├── tests/                   Vitest unit + Playwright frontend suites
 │   ├── Dockerfile               Vite build → nginx, deployed as wheresxi-web
 │   └── nginx.conf               SPA fallback + cache headers
-├── package.json                 Thin orchestrator — delegates to frontend/ + backend/
+├── package.json                 Thin orchestrator — pnpm filters into frontend/ + backend/
+├── pnpm-workspace.yaml          Declares frontend + backend as workspaces
+├── pnpm-lock.yaml               Single lockfile covering both workspaces
 ├── DEPLOY.md                    Step-by-step Railway recipe
 └── railway.toml                 Railway service hints
 ```
@@ -50,6 +52,7 @@ his Steam activity. He is not.
 | Tests        | Vitest + Playwright (`@playwright/test`)         |
 | Auth         | DB-backed bearer tokens (`wxi_…`), sha256-hashed |
 | Time zone    | `America/Toronto` via `date-fns-tz`              |
+| Tooling      | pnpm workspace (corepack) · Node 22              |
 
 ## Local development
 
@@ -57,7 +60,7 @@ his Steam activity. He is not.
 
 - Node 22 (`nvm use 22.22.0`)
 - Docker Desktop
-- npm
+- pnpm (`corepack enable` activates the version pinned in `package.json`)
 
 ### One-time setup
 
@@ -66,13 +69,13 @@ his Steam activity. He is not.
 cd backend
 docker compose up -d                    # postgres on localhost:5433
 
-# 2. Install both services from the repo root
+# 2. Install both workspaces from the repo root
 cd ..
-npm run install:all                     # npm install in frontend/ + backend/
+pnpm install                            # one root install covers both services
 
 # 3. Apply schema
 cd backend
-npx prisma migrate dev                  # applies migrations to wheresxi DB
+pnpm exec prisma migrate dev            # applies migrations to wheresxi DB
 ```
 
 ### Run
@@ -80,14 +83,14 @@ npx prisma migrate dev                  # applies migrations to wheresxi DB
 From the repo root:
 
 ```bash
-npm run dev:backend                      # API on http://localhost:3333
-npm run dev:frontend                     # frontend on http://localhost:5173
+pnpm dev:backend                         # API on http://localhost:3333
+pnpm dev:frontend                        # frontend on http://localhost:5173
 ```
 
-Both root scripts are thin wrappers — `npm run dev:frontend` calls
-`npm --prefix frontend run dev`, `npm run dev:backend` calls
-`npm --prefix backend run dev`. You can also `cd frontend` / `cd backend`
-and run the unscoped scripts directly (`npm run dev`, etc).
+Both scripts are thin wrappers — `pnpm dev:frontend` calls
+`pnpm --filter frontend dev`, `pnpm dev:backend` calls
+`pnpm --filter backend dev`. You can also `cd frontend` / `cd backend`
+and run the unscoped scripts directly (`pnpm dev`, etc).
 
 ### Bootstrap your first user
 
@@ -108,28 +111,27 @@ Run all of these from the repo root unless noted.
 
 | Command                              | What                                   |
 | ------------------------------------ | -------------------------------------- |
-| `npm run install:all`                | Install both `frontend/` and `backend/` |
-| `npm run dev:frontend`               | Frontend on :5173                      |
-| `npm run dev:backend`                | API on :3333 with HMR                  |
-| `npm run build:frontend`             | tsc + vite build                       |
-| `npm run build:backend`              | Adonis production build                |
-| `npm run lint:frontend`              | ESLint over `frontend/`                |
-| `npm run lint:backend`               | ESLint over `backend/`                 |
-| `npm run typecheck:frontend`         | tsc --build (frontend)                 |
-| `npm run typecheck:backend`          | tsc --noEmit (backend)                 |
-| `npm run test:frontend:unit`         | Vitest frontend unit suite             |
-| `npm run test:frontend:e2e`          | Playwright frontend suite              |
-| `npm run test:backend:e2e`           | Playwright API suite                   |
-| `npm run test:backend:e2e:setup`     | Apply migrations to `wheresxi_test`    |
-| `cd backend && npx prisma studio`    | DB GUI (uses `backend/.env`)           |
+| `pnpm install`                       | Install both workspaces in one shot    |
+| `pnpm dev:frontend`                  | Frontend on :5173                      |
+| `pnpm dev:backend`                   | API on :3333 with HMR                  |
+| `pnpm build:frontend`                | tsc + vite build                       |
+| `pnpm build:backend`                 | Adonis production build                |
+| `pnpm lint:frontend`                 | ESLint over `frontend/`                |
+| `pnpm lint:backend`                  | ESLint over `backend/`                 |
+| `pnpm typecheck:frontend`            | tsc --build (frontend)                 |
+| `pnpm typecheck:backend`             | tsc --noEmit (backend)                 |
+| `pnpm test:frontend:unit`            | Vitest frontend unit suite             |
+| `pnpm test:frontend:e2e`             | Playwright frontend suite              |
+| `pnpm test:backend:e2e`              | Playwright API suite                   |
+| `pnpm test:backend:e2e:setup`        | Apply migrations to `wheresxi_test`    |
+| `cd backend && pnpm exec prisma studio` | DB GUI (uses `backend/.env`)        |
 | `cd backend && node ace make:invite` | Mint a signup invite                   |
 | `cd backend && node ace promote:admin <username>` | Promote a user to ADMIN   |
 
 The root `package.json` has zero dependencies — it's a thin orchestrator
-that delegates every command to either `frontend/` or `backend/` via
-`npm --prefix`. Each service is self-contained: `cd frontend && npm run
-dev` and `cd backend && npm run dev` both work without ever touching the
-repo root.
+that delegates every command to either workspace via `pnpm --filter`.
+The `pnpm-workspace.yaml` declares `frontend` and `backend` as the two
+workspaces; one root install is all you need.
 
 ## Architecture
 
@@ -173,11 +175,11 @@ Disabled entirely when `NODE_ENV=test`.
 From the repo root:
 
 ```bash
-npm run test:frontend:unit                              # frontend hook/unit contracts
-npm run test:frontend:e2e                               # frontend Playwright suite
-npm run test:backend:e2e                                # backend API Playwright suite
-npm run test:backend:e2e -- auth.spec.ts                # one backend file
-npm run test:backend:e2e -- -g "bankruptcy"             # backend filter by test name
+pnpm test:frontend:unit                              # frontend hook/unit contracts
+pnpm test:frontend:e2e                               # frontend Playwright suite
+pnpm test:backend:e2e                                # backend API Playwright suite
+pnpm test:backend:e2e -- auth.spec.ts                # one backend file
+pnpm test:backend:e2e -- -g "bankruptcy"             # backend filter by test name
 ```
 
 The Playwright config spawns a separate AdonisJS instance on **:3334**

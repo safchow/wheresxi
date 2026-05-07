@@ -1,11 +1,14 @@
 # Optional Railway hint — the actual deploy config lives in each service's
-# settings on railway.app. This file just declares the source roots so the
-# UI can find them.
+# settings on railway.app. This file just declares that the repo is built
+# via Dockerfiles; service roots and Dockerfile paths are configured per
+# service.
 #
 # In Railway:
 #   1. Create a project, add a Postgres + Redis plugin.
-#   2. Create two services: `wheresxi-api` (root: `backend`) and `wheresxi-web`
-#      (root: `frontend`). Both use Dockerfile builds.
+#   2. Create two services, both with source root `.` (the repo root, so
+#      Docker builds have access to the pnpm workspace lockfile):
+#        wheresxi-api  Dockerfile path: backend/Dockerfile
+#        wheresxi-web  Dockerfile path: frontend/Dockerfile
 #   3. Set env vars on `wheresxi-api`:
 #        DATABASE_URL          (auto from Postgres plugin)
 #        REDIS_URL             (auto from Redis plugin)

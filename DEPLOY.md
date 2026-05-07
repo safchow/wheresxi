@@ -20,8 +20,9 @@ Two services + two managed plugins:
    plugins.
 
 2. **Create the API service** (`wheresxi-api`)
-   - Source: this repo, root directory `backend`
-   - Builder: Dockerfile (`backend/Dockerfile`)
+   - Source: this repo, root directory `.` (the workspace root, so the
+     Docker build sees `pnpm-lock.yaml` and `pnpm-workspace.yaml`)
+   - Builder: Dockerfile, path `backend/Dockerfile`
    - Generated public domain: `https://wheresxi-api-production.up.railway.app`
      (or your own domain)
    - Env vars (Railway auto-fills the first two from the plugins):
@@ -42,8 +43,8 @@ Two services + two managed plugins:
      `CMD`), so the DB schema stays in sync with each release.
 
 3. **Create the web service** (`wheresxi-web`)
-   - Source: this repo, root directory `frontend`
-   - Builder: Dockerfile (`frontend/Dockerfile`)
+   - Source: this repo, root directory `.`
+   - Builder: Dockerfile, path `frontend/Dockerfile`
    - Build arg: `VITE_API_BASE_URL = https://<api-domain>` — must be set as
      a **Docker build arg**, not a runtime env, because Vite bakes it into
      the bundle at build time.
@@ -85,9 +86,12 @@ ALLOWED_ORIGINS=https://wheresxi.example,https://wheresxi-preview.up.railway.app
 
 ## Local docker
 
-Both Dockerfiles also work locally:
+Both Dockerfiles build from the repo root because they need access to
+`pnpm-lock.yaml` and `pnpm-workspace.yaml`:
 ```bash
-docker compose up -d                       # postgres
-cd backend  && docker build -t wheresxi-api .
-cd ../frontend && docker build -t wheresxi-web --build-arg VITE_API_BASE_URL=http://localhost:3333 .
+cd backend && docker compose up -d         # postgres
+cd ..
+docker build -f backend/Dockerfile  -t wheresxi-api .
+docker build -f frontend/Dockerfile -t wheresxi-web \
+  --build-arg VITE_API_BASE_URL=http://localhost:3333 .
 ```

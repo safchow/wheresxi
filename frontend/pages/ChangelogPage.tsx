@@ -11,6 +11,16 @@ type ChangelogEntry = {
 // schema, auth/security, or test coverage changes. See AGENTS.md.
 const CHANGELOG: ChangelogEntry[] = [
   {
+    version: 'v0.9.8',
+    date: '2026-05-07',
+    title: 'Migrated tooling to pnpm workspaces',
+    changes: [
+      'Replaced npm + per-service package-locks with a pnpm workspace, a single root pnpm-lock.yaml, and pnpm@10 pinned via corepack.',
+      'Rewrote both Dockerfiles to build from the repo root with pnpm install --frozen-lockfile; the backend image now reproduces the workspace symlink layout so node_modules resolution still works at runtime.',
+      'Updated all six CI workflows to use pnpm/action-setup, dropped install:all, and switched README/DEPLOY/railway.toml to point Docker builds at the repo root with explicit dockerfilePath per service.',
+    ],
+  },
+  {
     version: 'v0.9.7',
     date: '2026-05-07',
     title: 'Frontend service collocated under frontend/',
