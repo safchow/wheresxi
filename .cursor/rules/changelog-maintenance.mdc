@@ -5,9 +5,9 @@ alwaysApply: true
 
 # Changelog Maintenance
 
-When pushing changes or opening a PR, update `frontend/pages/ChangelogPage.tsx` if the work changes user-facing behavior, product copy, deployment behavior, auth/security logic, database schema, or test coverage in a meaningful way.
+When pushing changes or opening a PR, update `frontend/pages/ChangelogPage.tsx` if the work changes user-facing behavior, product copy, visible bug fixes, auth/security behavior, or database schema changes that users/admins need to know about.
 
 - Add the newest entry at the top of `CHANGELOG`.
 - Use a dated, versioned entry with high-level bullet points.
 - Group related commits into one entry; do not dump raw commit messages.
-- Skip only invisible maintenance like formatting-only edits, comment-only edits, or internal refactors with no observable impact.
+- Do not add public changelog entries for internal-only work: CI, tests, package managers, npm/pnpm scripts, Dockerfile-only changes, docs-only changes, folder moves, formatting, or refactors with no observable product impact.
