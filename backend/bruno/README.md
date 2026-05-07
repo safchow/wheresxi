@@ -10,7 +10,10 @@ Bruno requests for the full wheresxi API.
 4. Run **Auth / Signup** or **Auth / Login**.
 5. Copy the returned `token` into `auth_token`.
 
-Authenticated requests use `Authorization: Bearer {{auth_token}}`.
+Authenticated requests send `Authorization: Bearer {{auth_token}}` explicitly
+in the request headers. If an authenticated request returns 401, confirm the
+active environment has `auth_token` set to the raw `wxi_...` token from login
+with no quotes or `Bearer ` prefix.
 
 Admin requests require the token to belong to an `ADMIN` user. To create an
 admin account, mint an admin invite with:

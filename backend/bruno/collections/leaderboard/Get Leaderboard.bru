@@ -7,15 +7,12 @@ meta {
 get {
   url: {{base_url}}/api/leaderboard
   body: none
-  auth: bearer
-}
-
-auth:bearer {
-  token: {{auth_token}}
+  auth: none
 }
 
 headers {
   Origin: {{client_url}}
+  Authorization: Bearer {{auth_token}}
 }
 
 params:query {
