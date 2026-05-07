@@ -8,12 +8,13 @@ Bruno requests for the full wheresxi API.
 2. Copy `environments/local.bru.example` to your local environment if needed.
 3. Set `invite_token` to an admin-created invite token.
 4. Run **Auth / Signup** or **Auth / Login**.
-5. Copy the returned `token` into `auth_token`.
+5. The request's post-response script stores the returned `token` in
+   `auth_token` for the active environment.
 
-Authenticated requests send `Authorization: Bearer {{auth_token}}` explicitly
-in the request headers. If an authenticated request returns 401, confirm the
-active environment has `auth_token` set to the raw `wxi_...` token from login
-with no quotes or `Bearer ` prefix.
+Authenticated requests use a pre-request script to read `auth_token` and set
+`Authorization: Bearer <token>`. If an authenticated request returns 401,
+confirm an environment is selected and `auth_token` contains the raw `wxi_...`
+token from login with no quotes or `Bearer ` prefix.
 
 Admin requests require the token to belong to an `ADMIN` user. To create an
 admin account, mint an admin invite with:

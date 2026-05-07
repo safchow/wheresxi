@@ -24,6 +24,12 @@ body:json {
 params:query {
 }
 
+script:post-response {
+  if (res.body && res.body.token) {
+    bru.setEnvVar("auth_token", res.body.token);
+  }
+}
+
 docs {
   # Login
 
@@ -38,5 +44,6 @@ docs {
 
   ## Response
 
-  Returns `user`, `token`, and `expiresAt`. Copy `token` into `auth_token`.
+  Returns `user`, `token`, and `expiresAt`. The post-response script stores
+  `token` in `auth_token` for the active environment.
 }

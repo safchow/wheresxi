@@ -12,7 +12,6 @@ post {
 
 headers {
   Origin: {{client_url}}
-  Authorization: Bearer {{auth_token}}
 }
 
 body:json {
@@ -24,6 +23,14 @@ body:json {
 }
 
 params:query {
+}
+
+script:pre-request {
+  const token = bru.getEnvVar("auth_token") || bru.getVar("auth_token");
+
+  if (token) {
+    req.setHeader("Authorization", `Bearer ${token}`);
+  }
 }
 
 docs {
