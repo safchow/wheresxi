@@ -13,6 +13,8 @@
     "lint": "eslint .",
     "lint:frontend": "eslint .",
     "lint:backend": "npm --prefix backend run lint",
+    "typecheck:frontend": "tsc -b",
+    "typecheck:backend": "npm --prefix backend run typecheck",
     "preview": "vite preview",
     "test:unit": "vitest run",
     "test:frontend:unit": "vitest run",

@@ -11,6 +11,15 @@ type ChangelogEntry = {
 // schema, auth/security, or test coverage changes. See AGENTS.md.
 const CHANGELOG: ChangelogEntry[] = [
   {
+    version: 'v0.9.6',
+    date: '2026-05-07',
+    title: 'Typecheck runs on every pull request',
+    changes: [
+      'Added Typecheck Frontend and Typecheck Backend GitHub Actions workflows so tsc runs on each PR for both services.',
+      'Added typecheck:frontend and typecheck:backend root scripts to keep the per-service script naming consistent.',
+    ],
+  },
+  {
     version: 'v0.9.5',
     date: '2026-05-07',
     title: 'Frontend lint runs on every pull request',
