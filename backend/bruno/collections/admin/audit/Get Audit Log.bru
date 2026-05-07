@@ -1,0 +1,32 @@
+meta {
+  name: Get Audit Log
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/admin/audit
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{auth_token}}
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+}
+
+docs {
+  # Get Audit Log
+
+  Return the most recent admin audit entries.
+
+  **Endpoint:** `GET /api/admin/audit`
+
+  Requires an `ADMIN` token.
+}

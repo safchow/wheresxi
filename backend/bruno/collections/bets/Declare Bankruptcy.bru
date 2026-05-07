@@ -1,0 +1,30 @@
+meta {
+  name: Declare Bankruptcy
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{base_url}}/api/bankruptcy
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{auth_token}}
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+}
+
+docs {
+  # Declare Bankruptcy
+
+  Reset credits when the whale user is broke and has no pending bets.
+
+  **Endpoint:** `POST /api/bankruptcy`
+}

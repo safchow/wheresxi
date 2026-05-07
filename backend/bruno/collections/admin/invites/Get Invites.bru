@@ -1,0 +1,32 @@
+meta {
+  name: Get Invites
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/admin/invites
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{auth_token}}
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+}
+
+docs {
+  # Get Invites
+
+  Return all invite tokens.
+
+  **Endpoint:** `GET /api/admin/invites`
+
+  Requires an `ADMIN` token.
+}

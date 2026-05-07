@@ -1,0 +1,32 @@
+meta {
+  name: Get Admin Markets
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/admin/markets
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{auth_token}}
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+}
+
+docs {
+  # Get Admin Markets
+
+  Return recent markets for admin management.
+
+  **Endpoint:** `GET /api/admin/markets`
+
+  Requires an `ADMIN` token.
+}

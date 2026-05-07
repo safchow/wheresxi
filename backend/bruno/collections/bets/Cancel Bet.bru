@@ -1,0 +1,30 @@
+meta {
+  name: Cancel Bet
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{base_url}}/api/bets/{{bet_id}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{auth_token}}
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+}
+
+docs {
+  # Cancel Bet
+
+  Cancel a still-pending bet before the market locks.
+
+  **Endpoint:** `DELETE /api/bets/:id`
+}

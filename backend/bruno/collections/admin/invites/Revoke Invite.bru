@@ -1,0 +1,32 @@
+meta {
+  name: Revoke Invite
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{base_url}}/api/admin/invites/{{invite_id}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{auth_token}}
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+}
+
+docs {
+  # Revoke Invite
+
+  Revoke an invite token.
+
+  **Endpoint:** `DELETE /api/admin/invites/:id`
+
+  Requires an `ADMIN` token.
+}

@@ -1,0 +1,42 @@
+meta {
+  name: Login Whale User
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/api/auth/login
+  body: json
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+body:json {
+  {
+    "username": "{{whale_username}}",
+    "password": "{{whale_password}}"
+  }
+}
+
+params:query {
+}
+
+docs {
+  # Login Whale User
+
+  Authenticate the whale user.
+
+  **Endpoint:** `POST /api/auth/login`
+
+  ## Request Body
+
+  - `username` (string, required): Whale username.
+  - `password` (string, required): Whale password.
+
+  ## Response
+
+  Returns `user`, `token`, and `expiresAt`. Copy `token` into `auth_token`.
+}

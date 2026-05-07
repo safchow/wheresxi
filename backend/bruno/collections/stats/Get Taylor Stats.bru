@@ -1,0 +1,30 @@
+meta {
+  name: Get Taylor Stats
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/stats/taylor
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{auth_token}}
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+}
+
+docs {
+  # Get Taylor Stats
+
+  Return Taylor dossier stats and recent arrivals.
+
+  **Endpoint:** `GET /api/stats/taylor`
+}

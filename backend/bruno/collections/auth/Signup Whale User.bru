@@ -1,0 +1,46 @@
+meta {
+  name: Signup Whale User
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/api/auth/signup
+  body: json
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+body:json {
+  {
+    "inviteToken": "{{invite_token}}",
+    "username": "{{whale_username}}",
+    "name": "{{whale_name}}",
+    "password": "{{whale_password}}"
+  }
+}
+
+params:query {
+}
+
+docs {
+  # Signup Whale User
+
+  Create the whale user with an invite token.
+
+  **Endpoint:** `POST /api/auth/signup`
+
+  ## Request Body
+
+  - `inviteToken` (string, required): Active invite token.
+  - `username` (string, required): 3-32 characters, letters/numbers/underscore.
+  - `name` (string, required): Display name.
+  - `password` (string, required): Minimum 6 characters.
+
+  ## Response
+
+  Returns `user`, `token`, and `expiresAt`. Copy `token` into `auth_token`.
+}

@@ -1,0 +1,30 @@
+meta {
+  name: Get Leaderboard
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/leaderboard
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{auth_token}}
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+}
+
+docs {
+  # Get Leaderboard
+
+  Return the lifetime earned-credits leaderboard.
+
+  **Endpoint:** `GET /api/leaderboard`
+}

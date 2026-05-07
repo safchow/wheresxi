@@ -1,0 +1,30 @@
+meta {
+  name: Logout
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/api/auth/logout
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{auth_token}}
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+}
+
+docs {
+  # Logout
+
+  Revoke the bearer token used for this request.
+
+  **Endpoint:** `POST /api/auth/logout`
+}

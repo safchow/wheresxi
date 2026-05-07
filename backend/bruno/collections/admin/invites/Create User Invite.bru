@@ -1,0 +1,40 @@
+meta {
+  name: Create User Invite
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/api/admin/invites
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{auth_token}}
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+body:json {
+  {
+    "expiresInDays": 30,
+    "note": "Bruno-created whale invite",
+    "grantsRole": "USER"
+  }
+}
+
+params:query {
+}
+
+docs {
+  # Create User Invite
+
+  Create a USER invite token.
+
+  **Endpoint:** `POST /api/admin/invites`
+
+  Copy the returned `invite.id` into `invite_id` if you want to revoke it.
+}

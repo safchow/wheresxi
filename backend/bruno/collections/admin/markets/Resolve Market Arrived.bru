@@ -1,0 +1,39 @@
+meta {
+  name: Resolve Market Arrived
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/api/admin/markets/resolve
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{auth_token}}
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+body:json {
+  {
+    "date": "{{resolve_date}}",
+    "arrivedAtMinute": {{exact_minute}}
+  }
+}
+
+params:query {
+}
+
+docs {
+  # Resolve Market Arrived
+
+  Resolve a market with Taylor's arrival minute.
+
+  **Endpoint:** `POST /api/admin/markets/resolve`
+
+  Requires an `ADMIN` token. Provide exactly one of `arrivedAtMinute` or `bustReason`.
+}

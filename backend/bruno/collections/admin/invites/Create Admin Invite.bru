@@ -1,0 +1,40 @@
+meta {
+  name: Create Admin Invite
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/api/admin/invites
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{auth_token}}
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+body:json {
+  {
+    "expiresInDays": 7,
+    "note": "Bruno-created admin invite",
+    "grantsRole": "ADMIN"
+  }
+}
+
+params:query {
+}
+
+docs {
+  # Create Admin Invite
+
+  Create an ADMIN invite token.
+
+  **Endpoint:** `POST /api/admin/invites`
+
+  Requires an `ADMIN` token.
+}

@@ -1,0 +1,14 @@
+vars {
+  base_url: http://localhost:3333
+  client_url: http://localhost:5173
+  invite_token: inv_replace_me
+  whale_username: whale
+  whale_name: Whale User
+  whale_password: secretpw
+  auth_token: wxi_replace_me
+  market_day_id: market_replace_me
+  bet_id: bet_replace_me
+  invite_id: invite_replace_me
+  resolve_date: 2026-04-28
+  exact_minute: 615
+}

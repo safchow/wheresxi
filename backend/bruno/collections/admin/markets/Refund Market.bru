@@ -1,0 +1,38 @@
+meta {
+  name: Refund Market
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{base_url}}/api/admin/markets/refund
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{auth_token}}
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+body:json {
+  {
+    "date": "{{resolve_date}}"
+  }
+}
+
+params:query {
+}
+
+docs {
+  # Refund Market
+
+  Void a market, refund pending bets, and mark the market refunded.
+
+  **Endpoint:** `POST /api/admin/markets/refund`
+
+  Requires an `ADMIN` token.
+}

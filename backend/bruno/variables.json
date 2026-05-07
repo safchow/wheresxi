@@ -1,0 +1,10 @@
+{
+  "local": {
+    "base_url": "http://localhost:3333",
+    "client_url": "http://localhost:5173"
+  },
+  "production": {
+    "base_url": "https://wheresxi-api-production.up.railway.app",
+    "client_url": "https://wheresxi.example"
+  }
+}

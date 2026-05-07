@@ -1,0 +1,30 @@
+meta {
+  name: Get API Root
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/
+  body: none
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+}
+
+docs {
+  # Get API Root
+
+  Basic API identity check.
+
+  **Endpoint:** `GET /`
+
+  ## Response
+
+  Returns the API name and an `ok` flag.
+}
