@@ -1,11 +1,11 @@
 import { renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { apiClient } from '@/api/client'
-import { useTaylorStats } from '@/api/queries'
+import { apiClient } from '@/client/client'
+import { useTaylorStats } from '@/client/queries'
 import { createHarness } from '../../helpers/queryHarness'
 
-vi.mock('@/api/client', () => ({
+vi.mock('@/client/client', () => ({
   apiClient: {
     get: vi.fn(),
     post: vi.fn(),

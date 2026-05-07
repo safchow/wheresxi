@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { apiClient } from '@/api/client'
-import { queryKeys } from '@/api/queryKeys'
-import type { LeaderboardResponse } from '@/api/types'
+import { apiClient } from '@/client/client'
+import { queryKeys } from '@/client/queryKeys'
+import type { LeaderboardResponse } from '@/client/types'
 
 export function useLeaderboard() {
   return useQuery({

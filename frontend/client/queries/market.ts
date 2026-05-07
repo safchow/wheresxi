@@ -1,7 +1,7 @@
 import { keepPreviousData, useQueries, useQuery } from '@tanstack/react-query'
-import { apiClient } from '@/api/client'
-import { queryKeys } from '@/api/queryKeys'
-import type { Granularity, WeekMarketsResponse } from '@/api/types'
+import { apiClient } from '@/client/client'
+import { queryKeys } from '@/client/queryKeys'
+import type { Granularity, WeekMarketsResponse } from '@/client/types'
 
 /** Shared fetcher so the single-granularity hook and the all-granularity
  *  prefetcher can't drift apart. */

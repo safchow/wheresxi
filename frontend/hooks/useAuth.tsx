@@ -5,9 +5,9 @@ import {
   useLogout,
   useMe,
   useSignup,
-} from '@/api/queries'
-import { readToken, writeToken } from '@/api/tokenStorage'
-import type { PublicUser } from '@/api/types'
+} from '@/client/queries'
+import { readToken, writeToken } from '@/client/tokenStorage'
+import type { PublicUser } from '@/client/types'
 
 /**
  * App-wide auth hook backed by TanStack Query. The bearer token lives in

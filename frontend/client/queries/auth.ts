@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { apiClient } from '@/api/client'
-import { queryKeys } from '@/api/queryKeys'
-import { readToken } from '@/api/tokenStorage'
-import type { AuthResponse, PublicUser } from '@/api/types'
+import { apiClient } from '@/client/client'
+import { queryKeys } from '@/client/queryKeys'
+import { readToken } from '@/client/tokenStorage'
+import type { AuthResponse, PublicUser } from '@/client/types'
 
 export function useMe() {
   const enabled = !!readToken()

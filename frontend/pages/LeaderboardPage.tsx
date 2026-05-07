@@ -5,8 +5,8 @@ import { Separator } from '@/components/ui/separator'
 import { useAuth } from '@/hooks/useAuth'
 import { extractApiError } from '@/lib/errors'
 import { cn } from '@/lib/utils'
-import { useLeaderboard } from '@/api/queries'
-import type { LeaderboardRow } from '@/api/types'
+import { useLeaderboard } from '@/client/queries'
+import type { LeaderboardRow } from '@/client/types'
 
 function fmtCr(n: number) {
   return `${n.toLocaleString()} cr`

@@ -2,9 +2,9 @@ import { Loader2, MapPin, Timer, Users } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { useTaylorStats } from '@/api/queries'
+import { useTaylorStats } from '@/client/queries'
 import { cn } from '@/lib/utils'
-import type { BustReason, RecentArrival } from '@/api/types'
+import type { BustReason, RecentArrival } from '@/client/types'
 
 const BUST_LABEL: Record<BustReason, string> = {
   BEFORE_NINE: 'Before 9 AM',

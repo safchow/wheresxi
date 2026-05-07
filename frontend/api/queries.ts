@@ -1,7 +1,0 @@
-export { queryKeys } from '@/api/queryKeys'
-export * from '@/api/queries/admin'
-export * from '@/api/queries/auth'
-export * from '@/api/queries/bets'
-export * from '@/api/queries/leaderboard'
-export * from '@/api/queries/market'
-export * from '@/api/queries/stats'

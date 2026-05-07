@@ -27,7 +27,7 @@ his Steam activity. He is not.
 │   ├── docker-compose.yml       Local Postgres on :5433
 │   └── Dockerfile               Multi-stage build, runs migrations on boot
 └── frontend/                    React + Vite + Tailwind + shadcn-style frontend
-    ├── api/                     Typed fetch client + TanStack Query hooks
+    ├── client/                  Typed fetch client + TanStack Query hooks
     ├── components/              MainMarket, MyActiveBets, TaylorDossier, …
     ├── pages/                   Home, MyBets, Leaderboard, Admin, Login, Signup, …
     └── hooks/useAuth.tsx        Token-storage + me-query wrapper

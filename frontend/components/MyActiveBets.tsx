@@ -3,11 +3,11 @@ import { Loader2, Receipt, Undo2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useCancelBet, useMyBets } from '@/api/queries'
+import { useCancelBet, useMyBets } from '@/client/queries'
 import { extractApiError } from '@/lib/errors'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
-import type { Bet } from '@/api/types'
+import type { Bet } from '@/client/types'
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const MONTH_NAMES = [

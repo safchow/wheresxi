@@ -15,8 +15,8 @@ import {
   useAdminResolveMarket,
   useCreateInvite,
   useRevokeInvite,
-} from '@/api/queries'
-import type { BustReason, MarketDay } from '@/api/types'
+} from '@/client/queries'
+import type { BustReason, MarketDay } from '@/client/types'
 
 const BUST_REASON_LABEL: Record<BustReason, string> = {
   BEFORE_NINE: 'Arrived before 9 AM',

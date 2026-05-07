@@ -1,4 +1,4 @@
-import type { Granularity } from '@/api/types'
+import type { Granularity } from '@/client/types'
 
 /**
  * Centralized query keys. Hierarchical so we can invalidate by prefix:

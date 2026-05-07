@@ -11,6 +11,15 @@ type ChangelogEntry = {
 // schema, auth/security, or test coverage changes. See AGENTS.md.
 const CHANGELOG: ChangelogEntry[] = [
   {
+    version: 'v0.9.2',
+    date: '2026-05-07',
+    title: 'Frontend client folder gets a clearer name',
+    changes: [
+      'Renamed frontend/api to frontend/client so the folder reads as the frontend HTTP client, not the backend service.',
+      'Updated every frontend import and the matching unit test layout to follow the rename.',
+    ],
+  },
+  {
     version: 'v0.9.1',
     date: '2026-05-06',
     title: 'Frontend query hooks get contract coverage',
