@@ -104,21 +104,31 @@ export function MainMarket() {
   // background to keep network noise reasonable.
   const { activeQuery: weekQuery } = useAllWeekMarkets(granularity)
   const markets = weekQuery.data?.markets ?? []
-  const [selectedDayId, setSelectedDayId] = useState<string | null>(null)
+  // Tracks the day the user has clicked. When unset (or no longer present
+  // in the loaded markets), we fall back to the soonest open day below so
+  // the UI never renders a stale or empty selection.
+  const [userSelectedDayId, setUserSelectedDayId] = useState<string | null>(
+    null,
+  )
 
-  // Default-select the soonest non-resolved day; otherwise first.
-  useEffect(() => {
-    if (markets.length === 0) return
-    setSelectedDayId((prev) => {
-      if (prev && markets.some((m) => m.market.id === prev)) return prev
-      const live = markets.find((m) => m.market.status === 'OPEN')
-      return live?.market.id ?? markets[0].market.id
-    })
-  }, [markets])
+  // Resolved selection: prefer the user's choice when it still matches a
+  // loaded market, otherwise default to the soonest OPEN day, otherwise
+  // the first day. Derived at render so we don't need an effect that
+  // bumps state right after the data lands.
+  const selectedDayId = useMemo<string | null>(() => {
+    if (markets.length === 0) return null
+    if (
+      userSelectedDayId &&
+      markets.some((m) => m.market.id === userSelectedDayId)
+    ) {
+      return userSelectedDayId
+    }
+    const live = markets.find((m) => m.market.status === 'OPEN')
+    return live?.market.id ?? markets[0].market.id
+  }, [markets, userSelectedDayId])
 
   const selectedView = useMemo<MarketView | null>(
-    () =>
-      markets.find((m) => m.market.id === selectedDayId) ?? markets[0] ?? null,
+    () => markets.find((m) => m.market.id === selectedDayId) ?? null,
     [markets, selectedDayId],
   )
 
@@ -191,7 +201,7 @@ export function MainMarket() {
                 </div>
                 <Tabs
                   value={selectedView?.market.id ?? ''}
-                  onValueChange={setSelectedDayId}
+                  onValueChange={setUserSelectedDayId}
                 >
                   <TabsList className="grid w-full grid-cols-3 h-auto p-1">
                     {markets.map(({ market }) => (
@@ -618,18 +628,23 @@ function WagerPanel({
   const { user } = useAuth()
   const balance = user?.credits ?? 0
   const [wager, setWager] = useState<number>(25)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
+  // Feedback is keyed by the inputs that produced it so changing any of
+  // them implicitly clears the stale message at render time, instead of
+  // an effect that schedules an extra render.
+  const [feedback, setFeedback] = useState<{
+    inputsKey: string
+    error: string | null
+    success: string | null
+  }>({ inputsKey: '', error: null, success: null })
   const placeBetMutation = usePlaceBet()
 
   const multiplier = MULTIPLIERS[granularity]
   const potential = wager * multiplier
   const profit = potential - wager
 
-  useEffect(() => {
-    setSuccess(null)
-    setError(null)
-  }, [granularity, selection, wager, market.id])
+  const inputsKey = `${granularity}|${JSON.stringify(selection)}|${wager}|${market.id}`
+  const error = feedback.inputsKey === inputsKey ? feedback.error : null
+  const success = feedback.inputsKey === inputsKey ? feedback.success : null
 
   const guessLabel =
     granularity === 'EXACT'
@@ -649,8 +664,6 @@ function WagerPanel({
     wager < 1
 
   async function submit() {
-    setError(null)
-    setSuccess(null)
     if (!selection) return
     try {
       if (selection.kind === 'exact') {
@@ -670,11 +683,17 @@ function WagerPanel({
           wager,
         })
       }
-      setSuccess(
-        `Locked in ${wager} cr on ${guessLabel} for ${formatDay(market.date)} ${formatDate(market.date)}.`,
-      )
+      setFeedback({
+        inputsKey,
+        error: null,
+        success: `Locked in ${wager} cr on ${guessLabel} for ${formatDay(market.date)} ${formatDate(market.date)}.`,
+      })
     } catch (err) {
-      setError(extractApiError(err) ?? 'Could not place guess')
+      setFeedback({
+        inputsKey,
+        error: extractApiError(err) ?? 'Could not place guess',
+        success: null,
+      })
     }
   }
 
