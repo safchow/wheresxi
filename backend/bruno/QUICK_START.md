@@ -9,7 +9,7 @@
 
 3. Put a real invite token in `invite_token`.
 
-4. Run **Auth / Signup Whale User**.
+4. Run **Auth / Signup**.
 
 5. Copy the response `token` to `auth_token`.
 

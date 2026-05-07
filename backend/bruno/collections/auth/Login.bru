@@ -1,5 +1,5 @@
 meta {
-  name: Login Whale User
+  name: Login
   type: http
   seq: 2
 }
@@ -16,8 +16,8 @@ headers {
 
 body:json {
   {
-    "username": "{{whale_username}}",
-    "password": "{{whale_password}}"
+    "username": "{{username}}",
+    "password": "{{password}}"
   }
 }
 
@@ -25,16 +25,16 @@ params:query {
 }
 
 docs {
-  # Login Whale User
+  # Login
 
-  Authenticate the whale user.
+  Authenticate a user.
 
   **Endpoint:** `POST /api/auth/login`
 
   ## Request Body
 
-  - `username` (string, required): Whale username.
-  - `password` (string, required): Whale password.
+  - `username` (string, required): Username.
+  - `password` (string, required): Password.
 
   ## Response
 

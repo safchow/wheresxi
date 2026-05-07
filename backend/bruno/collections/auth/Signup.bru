@@ -1,5 +1,5 @@
 meta {
-  name: Signup Whale User
+  name: Signup
   type: http
   seq: 1
 }
@@ -17,9 +17,9 @@ headers {
 body:json {
   {
     "inviteToken": "{{invite_token}}",
-    "username": "{{whale_username}}",
-    "name": "{{whale_name}}",
-    "password": "{{whale_password}}"
+    "username": "{{username}}",
+    "name": "{{name}}",
+    "password": "{{password}}"
   }
 }
 
@@ -27,9 +27,9 @@ params:query {
 }
 
 docs {
-  # Signup Whale User
+  # Signup
 
-  Create the whale user with an invite token.
+  Create a user with an invite token.
 
   **Endpoint:** `POST /api/auth/signup`
 
