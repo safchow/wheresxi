@@ -7,108 +7,12 @@ type ChangelogEntry = {
   changes: string[]
 }
 
-// Keep this list current when shipping meaningful user-facing, deployment,
-// schema, auth/security, or test coverage changes. See AGENTS.md.
+// Keep this list current for meaningful user-visible features and bug fixes.
+// Internal tooling, CI, tests, refactors, scripts, and repo-layout changes do
+// not belong on the public changelog. See AGENTS.md.
 const CHANGELOG: ChangelogEntry[] = [
   {
-    version: 'v0.9.8',
-    date: '2026-05-07',
-    title: 'Migrated tooling to pnpm workspaces',
-    changes: [
-      'Replaced npm + per-service package-locks with a pnpm workspace, a single root pnpm-lock.yaml, and pnpm@10 pinned via corepack.',
-      'Rewrote both Dockerfiles to build from the repo root with pnpm install --frozen-lockfile; the backend image now reproduces the workspace symlink layout so node_modules resolution still works at runtime.',
-      'Updated all six CI workflows to use pnpm/action-setup, dropped install:all, and switched README/DEPLOY/railway.toml to point Docker builds at the repo root with explicit dockerfilePath per service.',
-    ],
-  },
-  {
-    version: 'v0.9.7',
-    date: '2026-05-07',
-    title: 'Frontend service collocated under frontend/',
-    changes: [
-      'Moved every frontend artifact (Dockerfile, nginx.conf, configs, tests, package.json) into frontend/ so the service mirrors backend/ as a self-contained folder.',
-      'Replaced the root package.json with a thin orchestrator that delegates to frontend/ and backend/ via npm --prefix; added an install:all script.',
-      'Updated CI workflows, Railway config, and DEPLOY.md to build the web image from frontend/ instead of the repo root.',
-    ],
-  },
-  {
-    version: 'v0.9.6',
-    date: '2026-05-07',
-    title: 'Typecheck runs on every pull request',
-    changes: [
-      'Added Typecheck Frontend and Typecheck Backend GitHub Actions workflows so tsc runs on each PR for both services.',
-      'Added typecheck:frontend and typecheck:backend root scripts to keep the per-service script naming consistent.',
-    ],
-  },
-  {
-    version: 'v0.9.5',
-    date: '2026-05-07',
-    title: 'Frontend lint runs on every pull request',
-    changes: [
-      'Added a Lint Frontend GitHub Actions workflow that runs ESLint on each PR.',
-      'Scoped the root ESLint config to frontend code so the backend service can stay on its own toolchain.',
-      'Cleaned up frontend lint errors: dropped an unused shadcn export, removed a no-op interface, and refactored MainMarket to derive the selected day and reset wager feedback without setting state from inside an effect.',
-    ],
-  },
-  {
-    version: 'v0.9.4',
-    date: '2026-05-07',
-    title: 'Per-service npm scripts',
-    changes: [
-      'Added explicit dev:frontend, dev:backend, build:frontend, build:backend, lint:frontend, lint:backend, test:frontend:unit, test:frontend:e2e, and test:backend:e2e scripts at the repo root.',
-      'Updated the README so onboarding and local commands lead with the per-service names.',
-      'Kept the unscoped aliases (dev, build, lint, test:unit, test:e2e) intact so the Dockerfile and CI workflows continue to work unchanged.',
-    ],
-  },
-  {
-    version: 'v0.9.3',
-    date: '2026-05-07',
-    title: 'Scaffold cleanup',
-    changes: [
-      'Removed unused Vite/React scaffold SVGs and the placeholder hero image.',
-      'Removed unused shadcn exports (CardDescription, CardFooter, buttonVariants) so the UI surface only ships what the app actually uses.',
-      'Removed the unused useWeekMarkets hook and the test that covered only it.',
-    ],
-  },
-  {
-    version: 'v0.9.2',
-    date: '2026-05-07',
-    title: 'Frontend client folder gets a clearer name',
-    changes: [
-      'Renamed frontend/api to frontend/client so the folder reads as the frontend HTTP client, not the backend service.',
-      'Updated every frontend import and the matching unit test layout to follow the rename.',
-    ],
-  },
-  {
-    version: 'v0.9.1',
-    date: '2026-05-06',
-    title: 'Frontend query hooks get contract coverage',
-    changes: [
-      'Added fast unit tests that pin frontend query hook endpoints, payloads, and cache invalidation keys.',
-      'Added a Vitest test command so query hook refactors can be checked without launching the browser.',
-      'Added a frontend Vitest workflow so the unit suite runs on every pull request.',
-    ],
-  },
-  {
-    version: 'v0.9.0',
-    date: '2026-05-06',
-    title: 'Project folders get clearer names',
-    changes: [
-      'Renamed the React app folder from src to frontend.',
-      'Renamed the Adonis API folder from api to backend.',
-      'Updated build, test, deployment, and documentation references for the new layout.',
-    ],
-  },
-  {
-    version: 'v0.8.1',
-    date: '2026-05-06',
-    title: 'Theme toggle gets browser coverage',
-    changes: [
-      'Added a frontend Playwright test for the wallet theme toggle and cookie persistence.',
-      'Added a separate frontend Playwright workflow so UI regression tests run on pull requests.',
-    ],
-  },
-  {
-    version: 'v0.8.0',
+    version: 'v1.8.0',
     date: '2026-05-06',
     title: 'Theme preferences get explicit',
     changes: [
@@ -118,16 +22,7 @@ const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
-    version: 'v0.7.0',
-    date: '2026-05-06',
-    title: 'Pull requests get automated checks',
-    changes: [
-      'Added a GitHub Actions workflow that runs the Playwright API test suite on pull requests.',
-      'Provisioned a Postgres service in CI so database-backed API tests exercise migrations and real queries.',
-    ],
-  },
-  {
-    version: 'v0.6.0',
+    version: 'v1.6.0',
     date: '2026-05-06',
     title: 'Leaderboard tracks earned credits',
     changes: [
@@ -137,7 +32,7 @@ const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
-    version: 'v0.5.0',
+    version: 'v1.5.0',
     date: '2026-05-05',
     title: 'Bankruptcy gets less exploitable',
     changes: [
@@ -147,28 +42,26 @@ const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
-    version: 'v0.4.0',
+    version: 'v1.4.0',
     date: '2026-05-04',
-    title: 'Production hardening',
+    title: 'Production fixes',
     changes: [
-      'Made the web container listen on Railway\'s injected port to fix 502s in production.',
-      'Added branch protection support with CODEOWNERS.',
+      'Fixed production 502s so the web app responds on the platform-provided port.',
       'Removed the bootstrap system user so fake accounts do not leak into leaderboards.',
-      'Added an explicit leaderboard authentication regression test.',
     ],
   },
   {
-    version: 'v0.3.0',
+    version: 'v1.3.0',
     date: '2026-05-04',
     title: 'Admin and invite polish',
     changes: [
-      'Simplified deploy bootstrap with admin-grant invite links.',
+      'Added admin-grant invite links for setting up the first admin account.',
       'Added a GitHub link in the footer.',
       'Cleaned up admin copy and footer navigation.',
     ],
   },
   {
-    version: 'v0.2.0',
+    version: 'v1.2.0',
     date: '2026-05-04',
     title: 'Leaderboard and market stability',
     changes: [
@@ -178,14 +71,13 @@ const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
-    version: 'v0.1.0',
+    version: 'v1.1.0',
     date: '2026-05-04',
     title: 'Initial wheresxi launch',
     changes: [
       'Built the full Taylor-arrival guessing game with credits, fixed multipliers, and weekly Tue/Wed/Thu markets.',
       'Added invite-only auth, admin resolution tools, refunds, bet cancellation, and bankruptcy.',
       'Shipped leaderboard, rewards, rules, about, previous-bets, and Taylor dossier pages.',
-      'Added AdonisJS + Prisma + Postgres backend, Playwright API tests, Dockerfiles, and Railway deployment docs.',
     ],
   },
 ]
