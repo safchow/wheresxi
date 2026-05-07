@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { apiClient } from '@/api/client'
-import { queryKeys } from '@/api/queryKeys'
+import { apiClient } from '@/client/client'
+import { queryKeys } from '@/client/queryKeys'
 import type {
   BetWithUser,
   BustReason,
@@ -9,7 +9,7 @@ import type {
   RefundMarketResponse,
   ResolveMarketResponse,
   Role,
-} from '@/api/types'
+} from '@/client/types'
 
 export function useAdminMarkets() {
   return useQuery({

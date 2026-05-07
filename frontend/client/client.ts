@@ -1,5 +1,5 @@
-import { readToken } from '@/api/tokenStorage'
-import type { ApiErrorBody } from '@/api/types'
+import { readToken } from '@/client/tokenStorage'
+import type { ApiErrorBody } from '@/client/types'
 
 const API_BASE_URL =
   (typeof import.meta !== 'undefined' &&

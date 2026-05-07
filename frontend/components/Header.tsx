@@ -16,7 +16,7 @@ import {
   DropdownLabel,
   DropdownSeparator,
 } from '@/components/ui/dropdown'
-import { useDeclareBankruptcy } from '@/api/queries'
+import { useDeclareBankruptcy } from '@/client/queries'
 import { useAuth } from '@/hooks/useAuth'
 import { useTheme } from '@/hooks/useTheme'
 import { extractApiError } from '@/lib/errors'

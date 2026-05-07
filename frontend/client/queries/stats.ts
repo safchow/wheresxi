@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { apiClient } from '@/api/client'
-import { queryKeys } from '@/api/queryKeys'
-import type { TaylorStats } from '@/api/types'
+import { apiClient } from '@/client/client'
+import { queryKeys } from '@/client/queryKeys'
+import type { TaylorStats } from '@/client/types'
 
 export function useTaylorStats() {
   return useQuery({

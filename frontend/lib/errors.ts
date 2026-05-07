@@ -1,4 +1,4 @@
-import { ApiError } from '@/api/client'
+import { ApiError } from '@/client/client'
 
 /**
  * Pull a friendly error message out of whatever a query/mutation rejects with.

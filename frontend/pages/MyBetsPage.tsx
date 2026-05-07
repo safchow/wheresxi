@@ -13,10 +13,10 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useCancelBet, useMyBets } from '@/api/queries'
+import { useCancelBet, useMyBets } from '@/client/queries'
 import { extractApiError } from '@/lib/errors'
 import { cn } from '@/lib/utils'
-import type { Bet, BetStatus } from '@/api/types'
+import type { Bet, BetStatus } from '@/client/types'
 
 type Filter = 'all' | 'pending' | 'settled'
 

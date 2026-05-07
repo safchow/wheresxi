@@ -18,12 +18,12 @@ import {
   useAllWeekMarkets,
   useExactMinuteGuesses,
   usePlaceBet,
-} from '@/api/queries'
+} from '@/client/queries'
 import type {
   Granularity,
   MarketBucket,
   MarketView,
-} from '@/api/types'
+} from '@/client/types'
 
 type ExactSelection = { kind: 'exact'; hour: number; minute: number }
 type BucketSelection = { kind: 'bucket'; bucketId: string }

@@ -1,18 +1,18 @@
 import { renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { apiClient } from '@/api/client'
+import { apiClient } from '@/client/client'
 import {
   queryKeys,
   useCancelBet,
   useDeclareBankruptcy,
   useMyBets,
   usePlaceBet,
-} from '@/api/queries'
-import type { PlaceBetInput } from '@/api/types'
+} from '@/client/queries'
+import type { PlaceBetInput } from '@/client/types'
 import { createHarness, runMutation } from '../../helpers/queryHarness'
 
-vi.mock('@/api/client', () => ({
+vi.mock('@/client/client', () => ({
   apiClient: {
     get: vi.fn(),
     post: vi.fn(),
