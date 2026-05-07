@@ -45,7 +45,7 @@ DEPLOY.md                        Step-by-step Railway recipe
 | Routing      | react-router-dom                                 |
 | Backend      | AdonisJS 6 · Prisma 6 · VineJS · argon2          |
 | Storage      | PostgreSQL 16 · Redis (rate limiter, optional)   |
-| Tests        | Playwright (`@playwright/test`) — API + frontend |
+| Tests        | Vitest + Playwright (`@playwright/test`)         |
 | Auth         | DB-backed bearer tokens (`wxi_…`), sha256-hashed |
 | Time zone    | `America/Toronto` via `date-fns-tz`              |
 
@@ -109,6 +109,7 @@ CLI — see `DEPLOY.md` for the snippet.
 | `backend/` | `node ace promote:admin <username>`  | Promote a user to ADMIN                |
 | root     | `npm run dev`                          | Frontend on :5173                      |
 | root     | `npm run build`                        | tsc + vite build                       |
+| root     | `npm run test:unit`                    | Vitest frontend unit suite             |
 | root     | `npm run test:e2e`                     | Playwright frontend suite              |
 
 ## Architecture
@@ -151,6 +152,9 @@ Disabled entirely when `NODE_ENV=test`.
 ## Testing
 
 ```bash
+npm run test:unit                        # frontend hook/unit contracts
+npm run test:e2e                         # frontend Playwright suite
+
 cd backend
 npm run test:e2e                         # full suite
 npm run test:e2e -- auth.spec.ts         # one file
