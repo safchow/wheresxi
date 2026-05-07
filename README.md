@@ -26,15 +26,17 @@ his Steam activity. He is not.
 │   ├── commands/                node ace make:invite / promote:admin
 │   ├── docker-compose.yml       Local Postgres on :5433
 │   └── Dockerfile               Multi-stage build, runs migrations on boot
-└── frontend/                    React + Vite + Tailwind + shadcn-style frontend
-    ├── client/                  Typed fetch client + TanStack Query hooks
-    ├── components/              MainMarket, MyActiveBets, TaylorDossier, …
-    ├── pages/                   Home, MyBets, Leaderboard, Admin, Login, Signup, …
-    └── hooks/useAuth.tsx        Token-storage + me-query wrapper
-
-Dockerfile                       Frontend image (Vite build → nginx)
-nginx.conf                       SPA fallback + cache headers
-DEPLOY.md                        Step-by-step Railway recipe
+├── frontend/                    React + Vite + Tailwind + shadcn-style frontend
+│   ├── client/                  Typed fetch client + TanStack Query hooks
+│   ├── components/              MainMarket, MyActiveBets, TaylorDossier, …
+│   ├── pages/                   Home, MyBets, Leaderboard, Admin, Login, Signup, …
+│   ├── hooks/useAuth.tsx        Token-storage + me-query wrapper
+│   ├── tests/                   Vitest unit + Playwright frontend suites
+│   ├── Dockerfile               Vite build → nginx, deployed as wheresxi-web
+│   └── nginx.conf               SPA fallback + cache headers
+├── package.json                 Thin orchestrator — delegates to frontend/ + backend/
+├── DEPLOY.md                    Step-by-step Railway recipe
+└── railway.toml                 Railway service hints
 ```
 
 ## Stack
@@ -64,13 +66,13 @@ DEPLOY.md                        Step-by-step Railway recipe
 cd backend
 docker compose up -d                    # postgres on localhost:5433
 
-# 2. Backend deps + schema
-npm install
-npx prisma migrate dev                  # applies migrations to wheresxi DB
-
-# 3. Frontend deps
+# 2. Install both services from the repo root
 cd ..
-npm install
+npm run install:all                     # npm install in frontend/ + backend/
+
+# 3. Apply schema
+cd backend
+npx prisma migrate dev                  # applies migrations to wheresxi DB
 ```
 
 ### Run
@@ -82,7 +84,10 @@ npm run dev:backend                      # API on http://localhost:3333
 npm run dev:frontend                     # frontend on http://localhost:5173
 ```
 
-Both have unscoped aliases (`npm run dev` from root runs the frontend, `npm run dev` from `backend/` runs the API) for backwards compatibility.
+Both root scripts are thin wrappers — `npm run dev:frontend` calls
+`npm --prefix frontend run dev`, `npm run dev:backend` calls
+`npm --prefix backend run dev`. You can also `cd frontend` / `cd backend`
+and run the unscoped scripts directly (`npm run dev`, etc).
 
 ### Bootstrap your first user
 
@@ -103,22 +108,28 @@ Run all of these from the repo root unless noted.
 
 | Command                              | What                                   |
 | ------------------------------------ | -------------------------------------- |
+| `npm run install:all`                | Install both `frontend/` and `backend/` |
 | `npm run dev:frontend`               | Frontend on :5173                      |
 | `npm run dev:backend`                | API on :3333 with HMR                  |
 | `npm run build:frontend`             | tsc + vite build                       |
 | `npm run build:backend`              | Adonis production build                |
-| `npm run lint:frontend`              | ESLint over `frontend/` and `tests/`   |
+| `npm run lint:frontend`              | ESLint over `frontend/`                |
 | `npm run lint:backend`               | ESLint over `backend/`                 |
+| `npm run typecheck:frontend`         | tsc --build (frontend)                 |
+| `npm run typecheck:backend`          | tsc --noEmit (backend)                 |
 | `npm run test:frontend:unit`         | Vitest frontend unit suite             |
 | `npm run test:frontend:e2e`          | Playwright frontend suite              |
 | `npm run test:backend:e2e`           | Playwright API suite                   |
 | `npm run test:backend:e2e:setup`     | Apply migrations to `wheresxi_test`    |
-| `cd backend && npm run typecheck`    | tsc --noEmit (backend only)            |
 | `cd backend && npx prisma studio`    | DB GUI (uses `backend/.env`)           |
 | `cd backend && node ace make:invite` | Mint a signup invite                   |
 | `cd backend && node ace promote:admin <username>` | Promote a user to ADMIN   |
 
-The unscoped aliases (`npm run dev`, `build`, `lint`, `test:unit`, `test:e2e`) still work and target the frontend, matching what CI and the Dockerfile expect.
+The root `package.json` has zero dependencies — it's a thin orchestrator
+that delegates every command to either `frontend/` or `backend/` via
+`npm --prefix`. Each service is self-contained: `cd frontend && npm run
+dev` and `cd backend && npm run dev` both work without ever touching the
+repo root.
 
 ## Architecture
 
@@ -213,7 +224,7 @@ See [`DEPLOY.md`](./DEPLOY.md) for the full Railway recipe. TL;DR:
 Postgres plugin ──┐
                   ├─→ wheresxi-api  (Dockerfile, root: backend/)
 Redis plugin    ──┤
-                  └─→ wheresxi-web  (Dockerfile, root: ./)
+                  └─→ wheresxi-web  (Dockerfile, root: frontend/)
                                     build arg: VITE_API_BASE_URL
 ```
 

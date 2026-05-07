@@ -15,7 +15,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
-      "@/*": ["./frontend/*"]
+      "@/*": ["./*"]
     },
 
     /* Linting */
@@ -24,5 +24,14 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["frontend"]
+  "include": [
+    "./App.tsx",
+    "./main.tsx",
+    "./client/**/*",
+    "./components/**/*",
+    "./data/**/*",
+    "./hooks/**/*",
+    "./lib/**/*",
+    "./pages/**/*"
+  ]
 }

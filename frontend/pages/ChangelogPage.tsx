@@ -11,6 +11,16 @@ type ChangelogEntry = {
 // schema, auth/security, or test coverage changes. See AGENTS.md.
 const CHANGELOG: ChangelogEntry[] = [
   {
+    version: 'v0.9.7',
+    date: '2026-05-07',
+    title: 'Frontend service collocated under frontend/',
+    changes: [
+      'Moved every frontend artifact (Dockerfile, nginx.conf, configs, tests, package.json) into frontend/ so the service mirrors backend/ as a self-contained folder.',
+      'Replaced the root package.json with a thin orchestrator that delegates to frontend/ and backend/ via npm --prefix; added an install:all script.',
+      'Updated CI workflows, Railway config, and DEPLOY.md to build the web image from frontend/ instead of the repo root.',
+    ],
+  },
+  {
     version: 'v0.9.6',
     date: '2026-05-07',
     title: 'Typecheck runs on every pull request',
