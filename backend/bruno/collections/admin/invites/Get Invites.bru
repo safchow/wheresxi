@@ -1,0 +1,36 @@
+meta {
+  name: Get Invites
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/admin/invites
+  body: none
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+}
+
+script:pre-request {
+  const token = bru.getEnvVar("auth_token") || bru.getVar("auth_token");
+
+  if (token) {
+    req.setHeader("Authorization", `Bearer ${token}`);
+  }
+}
+
+docs {
+  # Get Invites
+
+  Return all invite tokens.
+
+  **Endpoint:** `GET /api/admin/invites`
+
+  Requires an `ADMIN` token.
+}

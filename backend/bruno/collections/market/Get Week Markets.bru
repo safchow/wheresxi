@@ -1,0 +1,41 @@
+meta {
+  name: Get Week Markets
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/market/week
+  body: none
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+  granularity: HALF_HOUR
+}
+
+script:pre-request {
+  const token = bru.getEnvVar("auth_token") || bru.getVar("auth_token");
+
+  if (token) {
+    req.setHeader("Authorization", `Bearer ${token}`);
+  }
+}
+
+docs {
+  # Get Week Markets
+
+  Return the active Tuesday, Wednesday, and Thursday markets for the current week.
+
+  **Endpoint:** `GET /api/market/week`
+
+  ## Query Parameters
+
+  - `granularity` (optional): `HALF_HOUR`, `QUARTER_HOUR`, `FIVE_MIN`, or `EXACT`.
+
+  Copy a returned `market.id` into `market_day_id` for bet and exact-minute requests.
+}

@@ -1,0 +1,36 @@
+meta {
+  name: Get Market Bets
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{base_url}}/api/admin/markets/{{market_day_id}}/bets
+  body: none
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+}
+
+script:pre-request {
+  const token = bru.getEnvVar("auth_token") || bru.getVar("auth_token");
+
+  if (token) {
+    req.setHeader("Authorization", `Bearer ${token}`);
+  }
+}
+
+docs {
+  # Get Market Bets
+
+  Return bets for a market with user details.
+
+  **Endpoint:** `GET /api/admin/markets/:id/bets`
+
+  Requires an `ADMIN` token.
+}

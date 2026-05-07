@@ -1,0 +1,42 @@
+meta {
+  name: Refund Market
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{base_url}}/api/admin/markets/refund
+  body: json
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+body:json {
+  {
+    "date": "{{resolve_date}}"
+  }
+}
+
+params:query {
+}
+
+script:pre-request {
+  const token = bru.getEnvVar("auth_token") || bru.getVar("auth_token");
+
+  if (token) {
+    req.setHeader("Authorization", `Bearer ${token}`);
+  }
+}
+
+docs {
+  # Refund Market
+
+  Void a market, refund pending bets, and mark the market refunded.
+
+  **Endpoint:** `POST /api/admin/markets/refund`
+
+  Requires an `ADMIN` token.
+}

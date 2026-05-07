@@ -1,0 +1,39 @@
+meta {
+  name: Get Exact Minute Guesses
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{base_url}}/api/market/{{market_day_id}}/exact-minute
+  body: none
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+  minute: {{exact_minute}}
+}
+
+script:pre-request {
+  const token = bru.getEnvVar("auth_token") || bru.getVar("auth_token");
+
+  if (token) {
+    req.setHeader("Authorization", `Bearer ${token}`);
+  }
+}
+
+docs {
+  # Get Exact Minute Guesses
+
+  Return the live count of exact-minute guesses for one market.
+
+  **Endpoint:** `GET /api/market/:id/exact-minute`
+
+  ## Query Parameters
+
+  - `minute` (number, required): Minute of day from 0 to 1440.
+}

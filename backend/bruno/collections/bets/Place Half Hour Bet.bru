@@ -1,0 +1,46 @@
+meta {
+  name: Place Half Hour Bet
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/api/bets
+  body: json
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+body:json {
+  {
+    "marketDayId": "{{market_day_id}}",
+    "granularity": "HALF_HOUR",
+    "bucketStartMinute": 600,
+    "bucketEndMinute": 630,
+    "wager": 25
+  }
+}
+
+params:query {
+}
+
+script:pre-request {
+  const token = bru.getEnvVar("auth_token") || bru.getVar("auth_token");
+
+  if (token) {
+    req.setHeader("Authorization", `Bearer ${token}`);
+  }
+}
+
+docs {
+  # Place Half Hour Bet
+
+  Place a wager on a market bucket.
+
+  **Endpoint:** `POST /api/bets`
+
+  Copy the returned `bet.id` into `bet_id` for cancellation.
+}

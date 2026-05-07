@@ -1,0 +1,43 @@
+meta {
+  name: Place Exact Minute Bet
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/api/bets
+  body: json
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+body:json {
+  {
+    "marketDayId": "{{market_day_id}}",
+    "granularity": "EXACT",
+    "exactMinute": {{exact_minute}},
+    "wager": 5
+  }
+}
+
+params:query {
+}
+
+script:pre-request {
+  const token = bru.getEnvVar("auth_token") || bru.getVar("auth_token");
+
+  if (token) {
+    req.setHeader("Authorization", `Bearer ${token}`);
+  }
+}
+
+docs {
+  # Place Exact Minute Bet
+
+  Place a wager on an exact arrival minute.
+
+  **Endpoint:** `POST /api/bets`
+}

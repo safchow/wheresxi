@@ -1,0 +1,34 @@
+meta {
+  name: Cancel Bet
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{base_url}}/api/bets/{{bet_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+}
+
+script:pre-request {
+  const token = bru.getEnvVar("auth_token") || bru.getVar("auth_token");
+
+  if (token) {
+    req.setHeader("Authorization", `Bearer ${token}`);
+  }
+}
+
+docs {
+  # Cancel Bet
+
+  Cancel a still-pending bet before the market locks.
+
+  **Endpoint:** `DELETE /api/bets/:id`
+}

@@ -1,0 +1,53 @@
+meta {
+  name: Signup
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/api/auth/signup
+  body: json
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+body:json {
+  {
+    "inviteToken": "{{invite_token}}",
+    "username": "{{username}}",
+    "name": "{{name}}",
+    "password": "{{password}}"
+  }
+}
+
+params:query {
+}
+
+script:post-response {
+  if (res.body && res.body.token) {
+    bru.setEnvVar("auth_token", res.body.token);
+  }
+}
+
+docs {
+  # Signup
+
+  Create a user with an invite token.
+
+  **Endpoint:** `POST /api/auth/signup`
+
+  ## Request Body
+
+  - `inviteToken` (string, required): Active invite token.
+  - `username` (string, required): 3-32 characters, letters/numbers/underscore.
+  - `name` (string, required): Display name.
+  - `password` (string, required): Minimum 6 characters.
+
+  ## Response
+
+  Returns `user`, `token`, and `expiresAt`. The post-response script stores
+  `token` in `auth_token` for the active environment.
+}

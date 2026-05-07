@@ -1,0 +1,34 @@
+meta {
+  name: Get My Bets
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/api/bets/me
+  body: none
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+}
+
+script:pre-request {
+  const token = bru.getEnvVar("auth_token") || bru.getVar("auth_token");
+
+  if (token) {
+    req.setHeader("Authorization", `Bearer ${token}`);
+  }
+}
+
+docs {
+  # Get My Bets
+
+  Return the authenticated user's most recent bets.
+
+  **Endpoint:** `GET /api/bets/me`
+}

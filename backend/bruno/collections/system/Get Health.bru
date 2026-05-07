@@ -1,0 +1,30 @@
+meta {
+  name: Get Health
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{base_url}}/health
+  body: none
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+}
+
+docs {
+  # Get Health
+
+  Health check endpoint.
+
+  **Endpoint:** `GET /health`
+
+  ## Response
+
+  Returns `status: "ok"` and the current server timestamp.
+}

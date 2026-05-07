@@ -1,0 +1,44 @@
+meta {
+  name: Create User Invite
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/api/admin/invites
+  body: json
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+body:json {
+  {
+    "expiresInDays": 30,
+    "note": "Bruno-created user invite",
+    "grantsRole": "USER"
+  }
+}
+
+params:query {
+}
+
+script:pre-request {
+  const token = bru.getEnvVar("auth_token") || bru.getVar("auth_token");
+
+  if (token) {
+    req.setHeader("Authorization", `Bearer ${token}`);
+  }
+}
+
+docs {
+  # Create User Invite
+
+  Create a USER invite token.
+
+  **Endpoint:** `POST /api/admin/invites`
+
+  Copy the returned `invite.id` into `invite_id` if you want to revoke it.
+}

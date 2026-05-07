@@ -1,0 +1,44 @@
+meta {
+  name: Create Admin Invite
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/api/admin/invites
+  body: json
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+body:json {
+  {
+    "expiresInDays": 7,
+    "note": "Bruno-created admin invite",
+    "grantsRole": "ADMIN"
+  }
+}
+
+params:query {
+}
+
+script:pre-request {
+  const token = bru.getEnvVar("auth_token") || bru.getVar("auth_token");
+
+  if (token) {
+    req.setHeader("Authorization", `Bearer ${token}`);
+  }
+}
+
+docs {
+  # Create Admin Invite
+
+  Create an ADMIN invite token.
+
+  **Endpoint:** `POST /api/admin/invites`
+
+  Requires an `ADMIN` token.
+}

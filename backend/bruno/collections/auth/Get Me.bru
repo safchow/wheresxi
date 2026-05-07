@@ -1,0 +1,38 @@
+meta {
+  name: Get Me
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/api/auth/me
+  body: none
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+params:query {
+}
+
+script:pre-request {
+  const token = bru.getEnvVar("auth_token") || bru.getVar("auth_token");
+
+  if (token) {
+    req.setHeader("Authorization", `Bearer ${token}`);
+  }
+}
+
+docs {
+  # Get Me
+
+  Return the authenticated user.
+
+  **Endpoint:** `GET /api/auth/me`
+
+  ## Authentication
+
+  Requires a valid `auth_token`; the pre-request script sends it as a bearer token.
+}

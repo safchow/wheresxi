@@ -1,0 +1,43 @@
+meta {
+  name: Resolve Market Arrived
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/api/admin/markets/resolve
+  body: json
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+body:json {
+  {
+    "date": "{{resolve_date}}",
+    "arrivedAtMinute": {{exact_minute}}
+  }
+}
+
+params:query {
+}
+
+script:pre-request {
+  const token = bru.getEnvVar("auth_token") || bru.getVar("auth_token");
+
+  if (token) {
+    req.setHeader("Authorization", `Bearer ${token}`);
+  }
+}
+
+docs {
+  # Resolve Market Arrived
+
+  Resolve a market with Taylor's arrival minute.
+
+  **Endpoint:** `POST /api/admin/markets/resolve`
+
+  Requires an `ADMIN` token. Provide exactly one of `arrivedAtMinute` or `bustReason`.
+}

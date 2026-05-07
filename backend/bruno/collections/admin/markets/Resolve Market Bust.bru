@@ -1,0 +1,43 @@
+meta {
+  name: Resolve Market Bust
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/api/admin/markets/resolve
+  body: json
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+body:json {
+  {
+    "date": "{{resolve_date}}",
+    "bustReason": "WFH_SICK"
+  }
+}
+
+params:query {
+}
+
+script:pre-request {
+  const token = bru.getEnvVar("auth_token") || bru.getVar("auth_token");
+
+  if (token) {
+    req.setHeader("Authorization", `Bearer ${token}`);
+  }
+}
+
+docs {
+  # Resolve Market Bust
+
+  Resolve a market as busted.
+
+  **Endpoint:** `POST /api/admin/markets/resolve`
+
+  Valid `bustReason` values are `BEFORE_NINE`, `AFTER_TENTHIRTY`, and `WFH_SICK`.
+}

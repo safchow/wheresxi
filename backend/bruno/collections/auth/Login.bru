@@ -1,0 +1,49 @@
+meta {
+  name: Login
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/api/auth/login
+  body: json
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+body:json {
+  {
+    "username": "{{username}}",
+    "password": "{{password}}"
+  }
+}
+
+params:query {
+}
+
+script:post-response {
+  if (res.body && res.body.token) {
+    bru.setEnvVar("auth_token", res.body.token);
+  }
+}
+
+docs {
+  # Login
+
+  Authenticate a user.
+
+  **Endpoint:** `POST /api/auth/login`
+
+  ## Request Body
+
+  - `username` (string, required): Username.
+  - `password` (string, required): Password.
+
+  ## Response
+
+  Returns `user`, `token`, and `expiresAt`. The post-response script stores
+  `token` in `auth_token` for the active environment.
+}
