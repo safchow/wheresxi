@@ -2,19 +2,28 @@
   "name": "wheresxi",
   "private": true,
   "version": "0.0.0",
+  "packageManager": "pnpm@10.16.0",
   "scripts": {
-    "install:all": "npm --prefix frontend install && npm --prefix backend install",
-    "dev:frontend": "npm --prefix frontend run dev",
-    "dev:backend": "npm --prefix backend run dev",
-    "build:frontend": "npm --prefix frontend run build",
-    "build:backend": "npm --prefix backend run build",
-    "lint:frontend": "npm --prefix frontend run lint",
-    "lint:backend": "npm --prefix backend run lint",
-    "typecheck:frontend": "npm --prefix frontend run typecheck",
-    "typecheck:backend": "npm --prefix backend run typecheck",
-    "test:frontend:unit": "npm --prefix frontend run test:unit",
-    "test:frontend:e2e": "npm --prefix frontend run test:e2e",
-    "test:backend:e2e": "npm --prefix backend run test:e2e",
-    "test:backend:e2e:setup": "npm --prefix backend run test:e2e:setup"
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "pnpm --filter backend dev",
+    "build:frontend": "pnpm --filter frontend build",
+    "build:backend": "pnpm --filter backend build",
+    "lint:frontend": "pnpm --filter frontend lint",
+    "lint:backend": "pnpm --filter backend lint",
+    "typecheck:frontend": "pnpm --filter frontend typecheck",
+    "typecheck:backend": "pnpm --filter backend typecheck",
+    "test:frontend:unit": "pnpm --filter frontend test:unit",
+    "test:frontend:e2e": "pnpm --filter frontend test:e2e",
+    "test:backend:e2e": "pnpm --filter backend test:e2e",
+    "test:backend:e2e:setup": "pnpm --filter backend test:e2e:setup"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "@swc/core",
+      "argon2",
+      "prisma"
+    ]
   }
 }
