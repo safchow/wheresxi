@@ -75,13 +75,14 @@ npm install
 
 ### Run
 
-```bash
-# Backend (in backend/)
-npm run dev                             # http://localhost:3333
+From the repo root:
 
-# Frontend (in repo root)
-npm run dev                             # http://localhost:5173
+```bash
+npm run dev:backend                      # API on http://localhost:3333
+npm run dev:frontend                     # frontend on http://localhost:5173
 ```
+
+Both have unscoped aliases (`npm run dev` from root runs the frontend, `npm run dev` from `backend/` runs the API) for backwards compatibility.
 
 ### Bootstrap your first user
 
@@ -98,19 +99,26 @@ CLI — see `DEPLOY.md` for the snippet.
 
 ### Useful commands
 
-| Where    | Command                                | What                                   |
-| -------- | -------------------------------------- | -------------------------------------- |
-| `backend/` | `npm run dev`                        | API on :3333 with HMR                  |
-| `backend/` | `npm run typecheck`                  | tsc --noEmit                           |
-| `backend/` | `npm run test:e2e`                   | Playwright API suite                   |
-| `backend/` | `npm run test:e2e:setup`             | Apply migrations to `wheresxi_test`    |
-| `backend/` | `npx prisma studio`                  | DB GUI (uses `.env`)                   |
-| `backend/` | `node ace make:invite`               | Mint a signup invite                   |
-| `backend/` | `node ace promote:admin <username>`  | Promote a user to ADMIN                |
-| root     | `npm run dev`                          | Frontend on :5173                      |
-| root     | `npm run build`                        | tsc + vite build                       |
-| root     | `npm run test:unit`                    | Vitest frontend unit suite             |
-| root     | `npm run test:e2e`                     | Playwright frontend suite              |
+Run all of these from the repo root unless noted.
+
+| Command                              | What                                   |
+| ------------------------------------ | -------------------------------------- |
+| `npm run dev:frontend`               | Frontend on :5173                      |
+| `npm run dev:backend`                | API on :3333 with HMR                  |
+| `npm run build:frontend`             | tsc + vite build                       |
+| `npm run build:backend`              | Adonis production build                |
+| `npm run lint:frontend`              | ESLint over `frontend/` and `tests/`   |
+| `npm run lint:backend`               | ESLint over `backend/`                 |
+| `npm run test:frontend:unit`         | Vitest frontend unit suite             |
+| `npm run test:frontend:e2e`          | Playwright frontend suite              |
+| `npm run test:backend:e2e`           | Playwright API suite                   |
+| `npm run test:backend:e2e:setup`     | Apply migrations to `wheresxi_test`    |
+| `cd backend && npm run typecheck`    | tsc --noEmit (backend only)            |
+| `cd backend && npx prisma studio`    | DB GUI (uses `backend/.env`)           |
+| `cd backend && node ace make:invite` | Mint a signup invite                   |
+| `cd backend && node ace promote:admin <username>` | Promote a user to ADMIN   |
+
+The unscoped aliases (`npm run dev`, `build`, `lint`, `test:unit`, `test:e2e`) still work and target the frontend, matching what CI and the Dockerfile expect.
 
 ## Architecture
 
@@ -151,14 +159,14 @@ Disabled entirely when `NODE_ENV=test`.
 
 ## Testing
 
-```bash
-npm run test:unit                        # frontend hook/unit contracts
-npm run test:e2e                         # frontend Playwright suite
+From the repo root:
 
-cd backend
-npm run test:e2e                         # full suite
-npm run test:e2e -- auth.spec.ts         # one file
-npm run test:e2e -- -g "bankruptcy"      # by name
+```bash
+npm run test:frontend:unit                              # frontend hook/unit contracts
+npm run test:frontend:e2e                               # frontend Playwright suite
+npm run test:backend:e2e                                # backend API Playwright suite
+npm run test:backend:e2e -- auth.spec.ts                # one backend file
+npm run test:backend:e2e -- -g "bankruptcy"             # backend filter by test name
 ```
 
 The Playwright config spawns a separate AdonisJS instance on **:3334**
