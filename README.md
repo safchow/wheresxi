@@ -98,19 +98,16 @@ The Slack app is a companion for the core workflows: account linking,
 market summaries, recent bets, leaderboard, modal-based bet placement, market
 open/lock reminders, and settlement DMs.
 
-1. Create a Slack app at <https://api.slack.com/apps>.
-2. Add bot scopes: `commands`, `chat:write`, `chat:write.public`, and
-   `users:read`.
-3. Install the app to your workspace and copy the **Bot User OAuth Token**.
-4. From the repo root, expose the backend with ngrok:
+1. From the repo root, expose the backend with ngrok:
    ```bash
    ngrok http 3333
    ```
-5. In the Slack app settings:
-   - Slash command: `/wheresxi`
-   - Request URL: `https://<ngrok-domain>/api/slack/commands`
-   - Interactivity Request URL: `https://<ngrok-domain>/api/slack/interactions`
-6. Add these to `backend/.env`:
+2. Copy `backend/slack-app-manifest.yml`, replace `https://api.wheresxi.com`
+   with your ngrok URL, and paste it into **Create New App → From a manifest**
+   at <https://api.slack.com/apps>.
+3. Install the app to your workspace, invite the bot to the reminder channel,
+   and copy the **Signing Secret** plus **Bot User OAuth Token**.
+4. Add these to `backend/.env`:
    ```bash
    SLACK_SIGNING_SECRET=<basic-information-signing-secret>
    SLACK_BOT_TOKEN=xoxb-...
@@ -118,7 +115,7 @@ open/lock reminders, and settlement DMs.
    SLACK_APP_BASE_URL=http://localhost:5173
    SLACK_INTERNAL_SECRET=<random-local-secret>
    ```
-7. Restart `pnpm dev:backend`, then run `/wheresxi link` in Slack. Open the
+5. Restart `pnpm dev:backend`, then run `/wheresxi link` in Slack. Open the
    returned link while logged in locally, confirm linking, then try
    `/wheresxi markets`, `/wheresxi bet`, `/wheresxi bets`, and
    `/wheresxi leaderboard`.

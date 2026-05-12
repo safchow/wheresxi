@@ -82,22 +82,15 @@ Two services + two managed plugins:
    ```
 
 5. **Configure Slack**
-   Create a Slack app at <https://api.slack.com/apps>, install it to the
-   target workspace, and add bot scopes:
+   Create a Slack app at <https://api.slack.com/apps> using
+   `backend/slack-app-manifest.yml`. The checked-in manifest targets
+   `https://api.wheresxi.com`; replace that host first if your API domain is
+   different.
 
-   ```
-   commands
-   chat:write
-   chat:write.public
-   users:read
-   ```
-
-   Configure the slash command and interactivity URLs against the API domain:
-
-   ```
-   /wheresxi request URL:      https://<api-domain>/api/slack/commands
-   Interactivity request URL:  https://<api-domain>/api/slack/interactions
-   ```
+   The manifest configures `/wheresxi`, interactivity, and the minimum bot
+   scopes: `commands` and `chat:write`. Install the app to the target
+   workspace, invite the bot to the reminder channel, then copy its Signing
+   Secret and Bot User OAuth Token into the API env vars.
 
    Slack requests are verified with `SLACK_SIGNING_SECRET`; no channel history
    or message-read scopes are required.
