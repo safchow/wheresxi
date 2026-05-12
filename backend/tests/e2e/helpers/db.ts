@@ -5,8 +5,7 @@ import { PrismaClient } from '@prisma/client'
  * `.env` (Prisma's CLI loads it on import). The webServer process gets the
  * matching URL via Playwright's webServer.command env.
  */
-const TEST_DB_URL =
-  'postgresql://wheresxi:wheresxi_dev@localhost:5433/wheresxi_test?schema=public'
+const TEST_DB_URL = 'postgresql://wheresxi:wheresxi_dev@localhost:5433/wheresxi_test?schema=public'
 
 let _prisma: PrismaClient | null = null
 
@@ -28,12 +27,15 @@ export async function resetDb(): Promise<void> {
   await prisma.$executeRawUnsafe(
     `TRUNCATE TABLE
       "BankruptcyEvent",
+      "SlackNotificationLog",
+      "SlackLinkToken",
+      "SlackAccount",
       "Bet",
       "AccessToken",
       "InviteToken",
       "MarketDay",
       "User"
-    RESTART IDENTITY CASCADE;`,
+    RESTART IDENTITY CASCADE;`
   )
 }
 

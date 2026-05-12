@@ -9,17 +9,14 @@ import { middleware } from '#start/kernel'
 import { throttleApi, throttleAuth, throttleSignup } from '#start/limiter'
 
 const AuthController = () => import('#controllers/auth_controller')
-const LeaderboardController = () =>
-  import('#controllers/leaderboard_controller')
+const LeaderboardController = () => import('#controllers/leaderboard_controller')
 const MarketController = () => import('#controllers/market_controller')
 const BetsController = () => import('#controllers/bets_controller')
 const StatsController = () => import('#controllers/stats_controller')
-const AdminMarketsController = () =>
-  import('#controllers/admin/markets_controller')
-const AdminInvitesController = () =>
-  import('#controllers/admin/invites_controller')
-const AdminAuditController = () =>
-  import('#controllers/admin/audit_controller')
+const SlackController = () => import('#controllers/slack_controller')
+const AdminMarketsController = () => import('#controllers/admin/markets_controller')
+const AdminInvitesController = () => import('#controllers/admin/invites_controller')
+const AdminAuditController = () => import('#controllers/admin/audit_controller')
 
 router.get('/', async () => ({ name: 'wheresxi-api', ok: true }))
 router.get('/health', async () => ({
@@ -33,17 +30,20 @@ router
     router.post('/auth/signup', [AuthController, 'signup']).use([throttleSignup])
     router.post('/auth/login', [AuthController, 'login']).use([throttleAuth])
 
+    // ─── Slack (public, signed by Slack) ──────────────────────────────
+    router.post('/slack/commands', [SlackController, 'commands'])
+    router.post('/slack/interactions', [SlackController, 'interactions'])
+    router.post('/internal/slack/reminders', [SlackController, 'reminders'])
+
     // ─── Authenticated ────────────────────────────────────────────────
     router
       .group(() => {
         router.get('/auth/me', [AuthController, 'me'])
         router.post('/auth/logout', [AuthController, 'logout'])
+        router.post('/slack/link', [SlackController, 'link'])
 
         router.get('/market/week', [MarketController, 'week'])
-        router.get('/market/:id/exact-minute', [
-          MarketController,
-          'exactMinute',
-        ])
+        router.get('/market/:id/exact-minute', [MarketController, 'exactMinute'])
 
         router.get('/leaderboard', [LeaderboardController, 'index'])
         router.get('/stats/taylor', [StatsController, 'taylor'])
@@ -57,25 +57,13 @@ router
         router
           .group(() => {
             router.get('/admin/markets', [AdminMarketsController, 'index'])
-            router.get('/admin/markets/:id/bets', [
-              AdminMarketsController,
-              'bets',
-            ])
-            router.post('/admin/markets/resolve', [
-              AdminMarketsController,
-              'resolve',
-            ])
-            router.post('/admin/markets/refund', [
-              AdminMarketsController,
-              'refund',
-            ])
+            router.get('/admin/markets/:id/bets', [AdminMarketsController, 'bets'])
+            router.post('/admin/markets/resolve', [AdminMarketsController, 'resolve'])
+            router.post('/admin/markets/refund', [AdminMarketsController, 'refund'])
 
             router.get('/admin/invites', [AdminInvitesController, 'index'])
             router.post('/admin/invites', [AdminInvitesController, 'store'])
-            router.delete('/admin/invites/:id', [
-              AdminInvitesController,
-              'destroy',
-            ])
+            router.delete('/admin/invites/:id', [AdminInvitesController, 'destroy'])
 
             router.get('/admin/audit', [AdminAuditController, 'index'])
           })

@@ -1,0 +1,35 @@
+meta {
+  name: Send Market Lock Reminder
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/api/internal/slack/reminders
+  body: json
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+  x-internal-slack-secret: {{slack_internal_secret}}
+}
+
+body:json {
+  {
+    "kind": "MARKET_LOCK",
+    "date": "{{market_date}}"
+  }
+}
+
+params:query {
+}
+
+docs {
+  # Send Market Lock Reminder
+
+  Triggers the idempotent internal Slack lock-reminder endpoint. Requires
+  `slack_internal_secret` to match `SLACK_INTERNAL_SECRET` on the backend.
+
+  **Endpoint:** `POST /api/internal/slack/reminders`
+}

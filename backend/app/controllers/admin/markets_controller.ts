@@ -4,10 +4,8 @@ import { PrismaClient } from '@prisma/client'
 import AuditService from '#services/audit_service'
 import BetService from '#services/bet_service'
 import MarketService from '#services/market_service'
-import {
-  refundMarketValidator,
-  resolveMarketValidator,
-} from '#validators/bet'
+import SlackService from '#services/slack_service'
+import { refundMarketValidator, resolveMarketValidator } from '#validators/bet'
 import ApiException from '#exceptions/api_exception'
 
 @inject()
@@ -17,6 +15,7 @@ export default class AdminMarketsController {
     private market: MarketService,
     private betService: BetService,
     private audit: AuditService,
+    private slack: SlackService
   ) {}
 
   /** GET /api/admin/markets — recent markets */
@@ -45,10 +44,10 @@ export default class AdminMarketsController {
     const arrived = payload.arrivedAtMinute
     const bust = payload.bustReason
     if ((arrived == null && !bust) || (arrived != null && bust)) {
-      throw new ApiException(
-        'Provide exactly one of arrivedAtMinute or bustReason',
-        { status: 422, code: 'E_BAD_RESOLVE' },
-      )
+      throw new ApiException('Provide exactly one of arrivedAtMinute or bustReason', {
+        status: 422,
+        code: 'E_BAD_RESOLVE',
+      })
     }
 
     const market = await this.upsertMarketForDate(payload.date)
@@ -78,6 +77,7 @@ export default class AdminMarketsController {
         settled: result.settled,
       },
     })
+    await this.slack.notifySettlementForMarket(result.market.id)
 
     return ctx.response.ok(result)
   }
@@ -104,6 +104,7 @@ export default class AdminMarketsController {
         refundTotal: result.refundTotal,
       },
     })
+    await this.slack.notifySettlementForMarket(result.market.id)
     return ctx.response.ok(result)
   }
 

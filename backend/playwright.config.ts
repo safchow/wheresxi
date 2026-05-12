@@ -2,8 +2,7 @@ import { defineConfig } from '@playwright/test'
 
 const PORT = 3334
 const HOST = 'localhost'
-const TEST_DB_URL =
-  'postgresql://wheresxi:wheresxi_dev@localhost:5433/wheresxi_test?schema=public'
+const TEST_DB_URL = 'postgresql://wheresxi:wheresxi_dev@localhost:5433/wheresxi_test?schema=public'
 
 /**
  * Playwright config for the wheresxi API integration suite.
@@ -44,6 +43,12 @@ export default defineConfig({
       `DATABASE_URL=${TEST_DB_URL}`,
       'ACCESS_TOKEN_TTL_DAYS=30',
       'USER_STARTING_CREDITS=500',
+      'SLACK_SIGNING_SECRET=test-slack-secret',
+      'SLACK_BOT_TOKEN=xoxb-test-token',
+      'SLACK_MARKET_CHANNEL_ID=C123MARKET',
+      'SLACK_APP_BASE_URL=http://localhost:5173',
+      'SLACK_INTERNAL_SECRET=test-internal-slack-secret',
+      'SLACK_DISABLE_WEB_API=true',
       'TZ=UTC',
       'node ace serve',
     ].join(' '),

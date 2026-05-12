@@ -12,6 +12,16 @@ type ChangelogEntry = {
 // not belong on the public changelog. See AGENTS.md.
 const CHANGELOG: ChangelogEntry[] = [
   {
+    version: 'v1.9.0',
+    date: '2026-05-12',
+    title: 'Slack companion app',
+    changes: [
+      'Added Slack account linking so players can connect Slack to their wheresxi account.',
+      'Added /wheresxi commands for markets, recent bets, leaderboard, and bet placement.',
+      'Added Slack market reminders and win/loss/refund notifications.',
+    ],
+  },
+  {
     version: 'v1.8.0',
     date: '2026-05-06',
     title: 'Theme preferences get explicit',
@@ -90,8 +100,8 @@ export function ChangelogPage() {
           Changelog
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          High-level notes for the people tracking Taylor infrastructure like
-          it is a regulated exchange.
+          High-level notes for the people tracking Taylor infrastructure like it
+          is a regulated exchange.
         </p>
       </div>
 

@@ -36,4 +36,13 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   // Optional Redis URL for distributed rate limiting.
   REDIS_URL: Env.schema.string.optional(),
+
+  // Slack companion app. Signing secret verifies inbound Slack requests;
+  // bot token/channel/secret are only needed when Slack delivery is enabled.
+  SLACK_SIGNING_SECRET: Env.schema.string.optional(),
+  SLACK_BOT_TOKEN: Env.schema.string.optional(),
+  SLACK_MARKET_CHANNEL_ID: Env.schema.string.optional(),
+  SLACK_APP_BASE_URL: Env.schema.string.optional(),
+  SLACK_INTERNAL_SECRET: Env.schema.string.optional(),
+  SLACK_DISABLE_WEB_API: Env.schema.boolean.optional(),
 })
