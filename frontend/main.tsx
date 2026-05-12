@@ -14,6 +14,7 @@ import { LeaderboardPage } from './pages/LeaderboardPage.tsx'
 import { MyBetsPage } from './pages/MyBetsPage.tsx'
 import { RewardsPage } from './pages/RewardsPage.tsx'
 import { RulesPage } from './pages/RulesPage.tsx'
+import { SlackLinkPage } from './pages/SlackLinkPage.tsx'
 import { SignupPage } from './pages/SignupPage.tsx'
 
 const router = createBrowserRouter([
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
       { path: 'rules', element: <RulesPage /> },
       { path: 'about', element: <AboutPage /> },
       { path: 'changelog', element: <ChangelogPage /> },
+      { path: 'slack/link', element: <SlackLinkPage /> },
       { path: 'admin', element: <AdminPage /> },
     ],
   },

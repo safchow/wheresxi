@@ -38,6 +38,11 @@ Two services + two managed plugins:
      ALLOWED_ORIGINS             https://wheresxi.example     # web service URL
      ACCESS_TOKEN_TTL_DAYS       30
      USER_STARTING_CREDITS       500
+     SLACK_SIGNING_SECRET        <Slack app signing secret>
+     SLACK_BOT_TOKEN             xoxb-...
+     SLACK_MARKET_CHANNEL_ID     <channel ID for market reminders>
+     SLACK_APP_BASE_URL          https://wheresxi.example
+     SLACK_INTERNAL_SECRET       <random scheduler secret>
      ```
    - `prisma migrate deploy` runs automatically on startup (see `Dockerfile`
      `CMD`), so the DB schema stays in sync with each release.
@@ -54,11 +59,13 @@ Two services + two managed plugins:
    Once deployed, exec into the API container and mint an admin-grant
    invite. The `--admin` flag means whoever signs up with the link is
    created as an ADMIN — no separate promote step needed.
+
    ```bash
    railway run --service=wheresxi-api node ace make:invite \
      --admin \
      --frontend=https://wheresxi.example
    ```
+
    The command prints a `https://wheresxi.example/signup?inviteToken=…`
    URL. Visit it, create your account, and you're in as admin.
 
@@ -69,17 +76,54 @@ Two services + two managed plugins:
 
    To later promote an existing regular user (e.g. a teammate who already
    signed up with a USER invite), use:
+
    ```bash
    railway run --service=wheresxi-api node ace promote:admin <username>
    ```
 
+5. **Configure Slack**
+   Create a Slack app at <https://api.slack.com/apps>, install it to the
+   target workspace, and add bot scopes:
+
+   ```
+   commands
+   chat:write
+   chat:write.public
+   users:read
+   ```
+
+   Configure the slash command and interactivity URLs against the API domain:
+
+   ```
+   /wheresxi request URL:      https://<api-domain>/api/slack/commands
+   Interactivity request URL:  https://<api-domain>/api/slack/interactions
+   ```
+
+   Slack requests are verified with `SLACK_SIGNING_SECRET`; no channel history
+   or message-read scopes are required.
+
+6. **Schedule reminders**
+   Use Railway cron, GitHub Actions, or another scheduler to call the internal
+   reminder endpoint with `SLACK_INTERNAL_SECRET`:
+   ```bash
+   curl -X POST https://<api-domain>/api/internal/slack/reminders \
+     -H "content-type: application/json" \
+     -H "x-internal-slack-secret: $SLACK_INTERNAL_SECRET" \
+     -d '{"kind":"MARKET_OPEN","date":"2026-04-28"}'
+   ```
+   Supported `kind` values are `MARKET_OPEN` and `MARKET_LOCK`. The endpoint
+   writes `SlackNotificationLog` rows, so retries do not duplicate Slack posts.
+
 ## CORS / origin
 
 `ALLOWED_ORIGINS` is a CSV list. The simplest setup:
+
 ```
 ALLOWED_ORIGINS=https://wheresxi.example
 ```
+
 For previews, append the preview origin:
+
 ```
 ALLOWED_ORIGINS=https://wheresxi.example,https://wheresxi-preview.up.railway.app
 ```
@@ -88,6 +132,7 @@ ALLOWED_ORIGINS=https://wheresxi.example,https://wheresxi-preview.up.railway.app
 
 Both Dockerfiles build from the repo root because they need access to
 `pnpm-lock.yaml` and `pnpm-workspace.yaml`:
+
 ```bash
 cd backend && docker compose up -d         # postgres
 cd ..

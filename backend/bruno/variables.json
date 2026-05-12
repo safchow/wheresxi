@@ -1,10 +1,16 @@
 {
   "local": {
     "base_url": "http://localhost:3333",
-    "client_url": "http://localhost:5173"
+    "client_url": "http://localhost:5173",
+    "slack_link_code": "",
+    "slack_internal_secret": "",
+    "market_date": "2026-04-28"
   },
   "production": {
     "base_url": "https://api.wheresxi.com",
-    "client_url": "https://wheresxi.com"
+    "client_url": "https://wheresxi.com",
+    "slack_link_code": "",
+    "slack_internal_secret": "",
+    "market_date": "2026-04-28"
   }
 }

@@ -1,0 +1,43 @@
+meta {
+  name: Link Slack Account
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/api/slack/link
+  body: json
+  auth: none
+}
+
+headers {
+  Origin: {{client_url}}
+}
+
+body:json {
+  {
+    "code": "{{slack_link_code}}"
+  }
+}
+
+params:query {
+}
+
+script:pre-request {
+  const token = bru.getEnvVar("auth_token") || bru.getVar("auth_token");
+
+  if (token) {
+    req.setHeader("Authorization", `Bearer ${token}`);
+  }
+}
+
+docs {
+  # Link Slack Account
+
+  Confirms a Slack link code while authenticated as a wheresxi user.
+
+  **Endpoint:** `POST /api/slack/link`
+
+  Get a code by running `/wheresxi link` in Slack, then copy the code into
+  `slack_link_code`.
+}
